@@ -1,7 +1,8 @@
 package encryption
 
 import (
-    "testing"
+	"reflect"
+	"testing"
 )
 
 func TestEncryptionDecryption(t *testing.T) {
@@ -84,4 +85,30 @@ func TestEncryptionDecryptionWithMultipleUsers(t *testing.T) {
             decryptedPassword3,
         )
     }   
+}
+
+func TestEncryptionReturnsADifferentResultEncryption(t *testing.T) {
+    masterPassword := "testMasterPassword"
+    var credentials map[string]string
+    credentials = make(map[string]string)
+    credentials["testUser1"] = "testPassword"
+    nonceSize := 12
+
+    encryptedCredentials1 := EncryptCredentials(masterPassword, credentials)
+    encryptedCredentials2 := EncryptCredentials(masterPassword, credentials)
+
+    nonce1, encrypted1 := encryptedCredentials1[:nonceSize], encryptedCredentials1[nonceSize:]  
+    nonce2, encrypted2 := encryptedCredentials2[:nonceSize], encryptedCredentials2[nonceSize:]  
+
+    if reflect.DeepEqual(nonce1, nonce2) {
+        t.Fatal(`Nonces should not be the same, maybe retry the test`)
+    }
+
+    if reflect.DeepEqual(encrypted1, encrypted2) {
+        t.Fatalf(
+            `Encrypted credentials should not encrypt to the same value with different nonces encrypted1: %v, encrypted2: %v`,
+            encrypted1, 
+            encrypted2,
+        )
+    }
 }
