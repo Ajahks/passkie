@@ -1,5 +1,0 @@
-## PasskieCredentialEncryption
-
-PasskieCredentialEncryption is an encryption library that will be used by Passkie password manager.
-
-This Golang module will provide encryption functions useful for encrypting and decyrpting credentials as well as hashing functions.
