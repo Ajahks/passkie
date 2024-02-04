@@ -19,5 +19,13 @@ go run .
 See above to test the program via main.go (not recommended).  Unit tests have also been written to do testing.
 
 ```
-go test
+go test ./[module folder]
+
+go test ./encryption
+go test ./hash
+```
+
+You can also run all the tests in this repo via
+```
+go test ./...
 ```
