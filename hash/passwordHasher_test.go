@@ -8,7 +8,7 @@ import (
 func TestPasswordHashIsNotTheSameAsPassword(t *testing.T) {
     password := "testPassword"
 
-    hashedPassword := hashPassword(password) 
+    hashedPassword := HashPassword(password) 
 
     if string(hashedPassword) == password {
         t.Fatalf(
@@ -23,8 +23,8 @@ func TestPasswordHashesOfDifferentPasswordsShouldBeDifferent(t *testing.T) {
     password1 := "testPassword1"
     password2 := "testPassword2"
 
-    hashedPassword1 := hashPassword(password1)
-    hashedPassword2 := hashPassword(password2)
+    hashedPassword1 := HashPassword(password1)
+    hashedPassword2 := HashPassword(password2)
 
     if reflect.DeepEqual(hashedPassword1, hashedPassword2) {
         t.Fatalf(
@@ -41,8 +41,8 @@ func TestPasswordsHashesOfSamePasswordShouldBeTheSame(t *testing.T) {
     password1 := "testPassword1"
     password2 := "testPassword1"
 
-    hashedPassword1 := hashPassword(password1)
-    hashedPassword2 := hashPassword(password2)
+    hashedPassword1 := HashPassword(password1)
+    hashedPassword2 := HashPassword(password2)
 
     if !reflect.DeepEqual(hashedPassword1, hashedPassword2) {
         t.Fatalf(

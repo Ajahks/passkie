@@ -9,7 +9,7 @@ func TestUrlHash(t *testing.T) {
     url := "testurl.com"
     salt := []byte("TestSalt")
 
-    hashedUrl := hashUrl(url, salt)
+    hashedUrl := HashUrl(url, salt)
 
     if string(hashedUrl) == url {
         t.Fatalf(
@@ -25,8 +25,8 @@ func TestUrlHashWithDifferentSaltShouldHashToDifferentValue(t *testing.T) {
     salt1 := []byte("TestSalt")
     salt2 := []byte("TestSalt2")
 
-    hashedUrl1 := hashUrl(url, salt1)
-    hashedUrl2 := hashUrl(url, salt2)
+    hashedUrl1 := HashUrl(url, salt1)
+    hashedUrl2 := HashUrl(url, salt2)
 
     if reflect.DeepEqual(hashedUrl1, hashedUrl2) {
         t.Fatalf(
@@ -42,8 +42,8 @@ func TestUrlHashWithSameSaltShouldResultInTheSameHashValue(t *testing.T) {
     salt1 := []byte("TestSalt")
     salt2 := []byte("TestSalt")
 
-    hashedUrl1 := hashUrl(url, salt1)
-    hashedUrl2 := hashUrl(url, salt2)
+    hashedUrl1 := HashUrl(url, salt1)
+    hashedUrl2 := HashUrl(url, salt2)
 
     if !reflect.DeepEqual(hashedUrl1, hashedUrl2) {
         t.Fatalf(

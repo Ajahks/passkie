@@ -5,8 +5,8 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
-	"crypto/sha256"
 	"encoding/gob"
+	passkieHash "github.com/Ajahks/PasskieCredentialEncryption/hash"
 	"log"
 )
 
@@ -19,9 +19,7 @@ func EncryptCredentials(masterPassword string, credentials map[string]string) []
     }
     credentialBytes := byteBuffer.Bytes()
 
-    h := sha256.New()
-    h.Write([]byte(masterPassword))
-    passwordHash := h.Sum(nil)
+    passwordHash := passkieHash.HashPassword(masterPassword)
 
     aesCipher, err := aes.NewCipher(passwordHash)
     if err != nil {
@@ -43,9 +41,7 @@ func EncryptCredentials(masterPassword string, credentials map[string]string) []
 }
 
 func DecryptCredentials(masterPassword string, encryptedCredentials []byte) map[string]string {
-    h := sha256.New()
-    h.Write([]byte(masterPassword))
-    passwordHash := h.Sum(nil)
+    passwordHash := passkieHash.HashPassword(masterPassword) 
 
     aesCipher, err := aes.NewCipher(passwordHash)
     if err != nil {
