@@ -2,7 +2,7 @@ package hash
 
 import "crypto/sha256"
 
-func hashUrl(url string, salt []byte) []byte {
+func HashUrl(url string, salt []byte) []byte {
     h := sha256.New()
     urlBytes := []byte(url)
     saltedUrlBytes := append(urlBytes, salt...)
