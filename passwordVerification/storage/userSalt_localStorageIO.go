@@ -47,6 +47,20 @@ func GetUserSalt(username string) ([]byte, error) {
     return salt, nil
 }
 
+// Removes a user salt from the storage
+func RemoveUserSalt(username string) {
+    data, err := os.ReadFile(LOCAL_FILE_PATH)
+    if err != nil {
+        log.Printf("Failed to read DB file: %s\n", err)
+    }
+ 
+    userSaltMap := deserializeFileData(data)
+
+    delete(userSaltMap, username)
+
+    writeMapToFile(userSaltMap)
+}
+
 func writeMapToFile(userSaltMap map[string][]byte) {
     os.Mkdir(LOCAL_DIR, os.ModePerm)
     file, err := os.Create(LOCAL_FILE_PATH)
@@ -78,3 +92,4 @@ func deserializeFileData(data []byte) map[string][]byte {
 
     return decodedUserSaltMap
 }
+
