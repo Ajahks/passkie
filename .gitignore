@@ -1,1 +1,4 @@
 PasskieCredentialEncryption
+localDb/
+Passkie
+passwordVerification/storage/localDb/
