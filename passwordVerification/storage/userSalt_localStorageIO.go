@@ -12,25 +12,25 @@ const LOCAL_DIR = "localDb"
 const LOCAL_FILE_PATH = LOCAL_DIR + "/userSaltDB.txt"
 
 // Stores user salts on a local file
-func PutUserSalt(username string, salt []byte) {
+func PutUserSalt(userhash string, salt []byte) {
     data, err := os.ReadFile(LOCAL_FILE_PATH)
     if err != nil {
         userSaltMap := make(map[string][]byte)
-        userSaltMap[username] = salt
+        userSaltMap[userhash] = salt
 
         writeMapToFile(userSaltMap)
 
     } else {
         userSaltMap := deserializeFileData(data)
 
-        userSaltMap[username] = salt
+        userSaltMap[userhash] = salt
 
         writeMapToFile(userSaltMap)
     }
 }
 
 // Reads salts on a local file 
-func GetUserSalt(username string) ([]byte, error) {
+func GetUserSalt(userhash string) ([]byte, error) {
     data, err := os.ReadFile(LOCAL_FILE_PATH)
     if err != nil {
         return nil, err 
@@ -38,9 +38,9 @@ func GetUserSalt(username string) ([]byte, error) {
 
     userSaltMap := deserializeFileData(data)
 
-    salt, ok := userSaltMap[username]
+    salt, ok := userSaltMap[userhash]
     if !ok {
-        log.Printf("User %s does not exist in the DB!\n", username)
+        log.Printf("User %s does not exist in the DB!\n", userhash)
         return nil, errors.New("User does not exist in the DB!")
     }
 
@@ -48,7 +48,7 @@ func GetUserSalt(username string) ([]byte, error) {
 }
 
 // Removes a user salt from the storage
-func RemoveUserSalt(username string) {
+func RemoveUserSalt(userhash string) {
     data, err := os.ReadFile(LOCAL_FILE_PATH)
     if err != nil {
         log.Printf("Failed to read DB file: %s\n", err)
@@ -56,7 +56,7 @@ func RemoveUserSalt(username string) {
  
     userSaltMap := deserializeFileData(data)
 
-    delete(userSaltMap, username)
+    delete(userSaltMap, userhash)
 
     writeMapToFile(userSaltMap)
 }
