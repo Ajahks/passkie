@@ -13,7 +13,7 @@ func GetSaltForUserHash(userHash []byte) []byte {
     if err != nil {
         newSalt := generateRandomSalt()
 
-        storage.PutUserSalt(userHashString, newSalt)
+        PutSaltForUserHash(userHash, newSalt)
 
         return newSalt
     }
