@@ -38,3 +38,8 @@ func PutSaltForUserHash(userHash []byte, salt []byte) {
     storage.PutUserSalt(userHashString, salt)
 }
 
+func RemoveSaltForUserHash(userHash []byte) {
+    userHashString := string(userHash)
+    storage.RemoveUserSalt(userHashString)
+}
+

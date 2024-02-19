@@ -49,6 +49,20 @@ func TestGetSaltForUserHashTwiceReturnsTheSameSaltGeneratedTheFirstTime(t *testi
     cleanDb()
 }
 
+func TestGetSaltForUserGeneratesNewHashAfterDelete(t *testing.T) {
+    testUserHash := []byte("testUserHash")
+
+    salt1 := GetSaltForUserHash(testUserHash)
+    RemoveSaltForUserHash(testUserHash)
+    salt2 := GetSaltForUserHash(testUserHash)
+
+    if bytes.Equal(salt1, salt2) {
+        t.Fatalf("GetSaltForUserHash does not generate a new hash after delete! Salt 1: %s, Salt2: %s", salt1, salt2)
+    }
+
+    cleanDb()
+}
+
 func cleanDb() {
     os.RemoveAll("localDb")
 }
