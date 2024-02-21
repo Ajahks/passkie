@@ -1,4 +1,4 @@
-package local
+package passwordHash 
 
 import (
 	"bytes"
@@ -8,25 +8,28 @@ import (
 	"os"
 )
 
+const LOCAL_DIR = "localDb" 
+const LOCAL_FILE_PATH = LOCAL_DIR + "/passwordDB.txt"
+
 func PutPasswordHash(userhash string, passwordHash []byte) {
-    data, err := os.ReadFile(LOCAL_FILE_PATH_PASSWORD)
+    data, err := os.ReadFile(LOCAL_FILE_PATH)
     if err != nil {
         userPasswordMap := make(map[string][]byte)
         userPasswordMap[userhash] = passwordHash 
 
-        writeUserPasswordMapToFile(userPasswordMap)
+        writeMapToFile(userPasswordMap)
 
     } else {
-        userPasswordMap := deserializeFileData(data)
+        userPasswordMap := deserializeFileDataForUserPasswordMap(data)
 
         userPasswordMap[userhash] = passwordHash 
 
-        writeUserPasswordMapToFile(userPasswordMap)
+        writeMapToFile(userPasswordMap)
     }
 }
 
 func GetPasswordHash(userhash string) ([]byte, error) {
-    data, err := os.ReadFile(LOCAL_FILE_PATH_PASSWORD)
+    data, err := os.ReadFile(LOCAL_FILE_PATH)
     if err != nil {
         return nil, err 
     }
@@ -43,7 +46,7 @@ func GetPasswordHash(userhash string) ([]byte, error) {
 }
 
 func RemovePasswordHash(userhash string) {
-    data, err := os.ReadFile(LOCAL_FILE_PATH_PASSWORD)
+    data, err := os.ReadFile(LOCAL_FILE_PATH)
     if err != nil {
         log.Printf("Failed to read DB file: %s\n", err)
     }
@@ -52,7 +55,7 @@ func RemovePasswordHash(userhash string) {
 
     delete(userPasswordMap, userhash)
 
-    writeUserPasswordMapToFile(userPasswordMap)
+    writeMapToFile(userPasswordMap)
 }
 
 func deserializeFileDataForUserPasswordMap(data []byte) map[string][]byte {
@@ -68,9 +71,9 @@ func deserializeFileDataForUserPasswordMap(data []byte) map[string][]byte {
     return decodedUserPasswordMap 
 }
 
-func writeUserPasswordMapToFile(userPasswordMap map[string][]byte) {
+func writeMapToFile(userPasswordMap map[string][]byte) {
     os.Mkdir(LOCAL_DIR, os.ModePerm)
-    file, err := os.Create(LOCAL_FILE_PATH_PASSWORD)
+    file, err := os.Create(LOCAL_FILE_PATH)
     if err != nil {
         log.Fatalf("failed creating file: %s", err)
     }
@@ -86,3 +89,4 @@ func writeUserPasswordMapToFile(userPasswordMap map[string][]byte) {
 
     file.Write(b.Bytes())
 }
+

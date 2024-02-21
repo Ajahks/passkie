@@ -1,4 +1,4 @@
-package local 
+package userSalt 
 
 import (
 	"bytes"
@@ -8,9 +8,12 @@ import (
 	"os"
 )
 
+const LOCAL_DIR = "localDb"
+const LOCAL_FILE_PATH = LOCAL_DIR + "/userSaltDB.txt"
+
 // Stores user salts on a local file
 func PutUserSalt(userhash string, salt []byte) {
-    data, err := os.ReadFile(LOCAL_FILE_PATH_USER_SALT)
+    data, err := os.ReadFile(LOCAL_FILE_PATH)
     if err != nil {
         userSaltMap := make(map[string][]byte)
         userSaltMap[userhash] = salt
@@ -28,7 +31,7 @@ func PutUserSalt(userhash string, salt []byte) {
 
 // Reads salts on a local file 
 func GetUserSalt(userhash string) ([]byte, error) {
-    data, err := os.ReadFile(LOCAL_FILE_PATH_USER_SALT)
+    data, err := os.ReadFile(LOCAL_FILE_PATH)
     if err != nil {
         return nil, err 
     }
@@ -46,7 +49,7 @@ func GetUserSalt(userhash string) ([]byte, error) {
 
 // Removes a user salt from the storage
 func RemoveUserSalt(userhash string) {
-    data, err := os.ReadFile(LOCAL_FILE_PATH_USER_SALT)
+    data, err := os.ReadFile(LOCAL_FILE_PATH)
     if err != nil {
         log.Printf("Failed to read DB file: %s\n", err)
     }
@@ -60,7 +63,7 @@ func RemoveUserSalt(userhash string) {
 
 func writeMapToFile(userSaltMap map[string][]byte) {
     os.Mkdir(LOCAL_DIR, os.ModePerm)
-    file, err := os.Create(LOCAL_FILE_PATH_USER_SALT)
+    file, err := os.Create(LOCAL_FILE_PATH)
     if err != nil {
         log.Fatalf("failed creating file: %s", err)
     }

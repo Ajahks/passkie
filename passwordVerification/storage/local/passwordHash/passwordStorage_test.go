@@ -1,4 +1,4 @@
-package local 
+package passwordHash 
 
 import (
 	"os"
@@ -12,9 +12,9 @@ func TestPutPasswordHashCreatesANewFileIfNonExistent(t *testing.T) {
 
     PutPasswordHash(username, passwordHash)
 
-    _, err := os.ReadFile(LOCAL_FILE_PATH_PASSWORD)
+    _, err := os.ReadFile(LOCAL_FILE_PATH)
     if err != nil {
-        t.Fatalf("PutPasswordHash did not create a new file: %s", LOCAL_FILE_PATH_PASSWORD)        
+        t.Fatalf("PutPasswordHash did not create a new file: %s", LOCAL_FILE_PATH)        
     }
 
     cleanDb()
@@ -99,5 +99,9 @@ func TestRemovePasswordHashRemovesTheUserPasswordHashFromTheMap(t *testing.T) {
     }
 
     cleanDb()
+}
+
+func cleanDb() {
+    os.RemoveAll(LOCAL_DIR)
 }
 

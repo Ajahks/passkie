@@ -1,4 +1,4 @@
-package local 
+package userSalt 
 
 import (
 	"os"
@@ -12,9 +12,9 @@ func TestPutUserSaltCreatesANewFileIfNonExistent(t *testing.T) {
 
     PutUserSalt(username, salt)
 
-    _, err := os.ReadFile(LOCAL_FILE_PATH_USER_SALT)
+    _, err := os.ReadFile(LOCAL_FILE_PATH)
     if err != nil {
-        t.Fatalf("PutUserSalt did not create a new file: %s", LOCAL_FILE_PATH_USER_SALT)        
+        t.Fatalf("PutUserSalt did not create a new file: %s", LOCAL_FILE_PATH)        
     }
 
     cleanDb()
@@ -104,3 +104,4 @@ func TestRemoveUserSaltRemovesTheUserSaltFromTheMap(t *testing.T) {
 func cleanDb() {
     os.RemoveAll(LOCAL_DIR)
 }
+
