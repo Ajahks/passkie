@@ -12,9 +12,9 @@ func TestPutUserSaltCreatesANewFileIfNonExistent(t *testing.T) {
 
     PutUserSalt(username, salt)
 
-    _, err := os.ReadFile(LOCAL_FILE_PATH)
+    _, err := os.ReadFile(LOCAL_FILE_PATH_USER_SALT)
     if err != nil {
-        t.Fatalf("PutUserSalt did not create a new file: %s", LOCAL_FILE_PATH)        
+        t.Fatalf("PutUserSalt did not create a new file: %s", LOCAL_FILE_PATH_USER_SALT)        
     }
 
     cleanDb()
