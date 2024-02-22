@@ -1,15 +1,14 @@
 package userSalt 
 
 import (
-	"bytes"
-	"encoding/gob"
 	"errors"
 	"log"
 	"os"
+    storageUtil "github.com/Ajahks/Passkie/passwordVerification/storage/local"
 )
 
-const LOCAL_DIR = "localDb"
-const LOCAL_FILE_PATH = LOCAL_DIR + "/userSaltDB.txt"
+const FILE_PATH = "userSaltDB.txt"
+const LOCAL_FILE_PATH = storageUtil.LOCAL_DIR + "/" + FILE_PATH
 
 // Stores user salts on a local file
 func PutUserSalt(userhash string, salt []byte) {
@@ -18,14 +17,14 @@ func PutUserSalt(userhash string, salt []byte) {
         userSaltMap := make(map[string][]byte)
         userSaltMap[userhash] = salt
 
-        writeMapToFile(userSaltMap)
+        storageUtil.WriteMapToFile(userSaltMap, FILE_PATH)
 
     } else {
-        userSaltMap := deserializeFileData(data)
+        userSaltMap := storageUtil.DeserializeFileData[[]byte](data)
 
         userSaltMap[userhash] = salt
 
-        writeMapToFile(userSaltMap)
+        storageUtil.WriteMapToFile(userSaltMap, FILE_PATH)
     }
 }
 
@@ -36,7 +35,7 @@ func GetUserSalt(userhash string) ([]byte, error) {
         return nil, err 
     }
 
-    userSaltMap := deserializeFileData(data)
+    userSaltMap := storageUtil.DeserializeFileData[[]byte](data)
 
     salt, ok := userSaltMap[userhash]
     if !ok {
@@ -54,42 +53,10 @@ func RemoveUserSalt(userhash string) {
         log.Printf("Failed to read DB file: %s\n", err)
     }
  
-    userSaltMap := deserializeFileData(data)
+    userSaltMap := storageUtil.DeserializeFileData[[]byte](data)
 
     delete(userSaltMap, userhash)
 
-    writeMapToFile(userSaltMap)
-}
-
-func writeMapToFile(userSaltMap map[string][]byte) {
-    os.Mkdir(LOCAL_DIR, os.ModePerm)
-    file, err := os.Create(LOCAL_FILE_PATH)
-    if err != nil {
-        log.Fatalf("failed creating file: %s", err)
-    }
-    defer file.Close()
-        
-    b := new(bytes.Buffer)
-    e := gob.NewEncoder(b)
-
-    err = e.Encode(userSaltMap)
-    if err != nil {
-         panic(err)
-    }
-
-    file.Write(b.Bytes())
-}
-
-func deserializeFileData(data []byte) map[string][]byte {
-    b := bytes.NewBuffer(data)
-    d := gob.NewDecoder(b)
-
-    var decodedUserSaltMap map[string][]byte
-    err := d.Decode(&decodedUserSaltMap)
-    if err != nil {
-        panic(err)
-    }
-
-    return decodedUserSaltMap
+    storageUtil.WriteMapToFile(userSaltMap, FILE_PATH)
 }
 

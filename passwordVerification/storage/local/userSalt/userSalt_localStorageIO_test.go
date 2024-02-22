@@ -4,6 +4,7 @@ import (
 	"os"
 	"reflect"
 	"testing"
+    localUtil "github.com/Ajahks/Passkie/passwordVerification/storage/local"
 )
 
 func TestPutUserSaltCreatesANewFileIfNonExistent(t *testing.T) {
@@ -16,8 +17,7 @@ func TestPutUserSaltCreatesANewFileIfNonExistent(t *testing.T) {
     if err != nil {
         t.Fatalf("PutUserSalt did not create a new file: %s", LOCAL_FILE_PATH)        
     }
-
-    cleanDb()
+    localUtil.CleanDB()
 }
 
 func TestPutUserSaltAndGetUserSaltRetrievesTheOriginalSalt(t *testing.T) {
@@ -33,7 +33,7 @@ func TestPutUserSaltAndGetUserSaltRetrievesTheOriginalSalt(t *testing.T) {
     if !reflect.DeepEqual(salt, retrievedSalt) {
         t.Fatalf("GetUserSalt does not return original salt!\nOriginal Salt: %s\n Retrieved Salt: %s", string(salt), string(retrievedSalt))
     }
-    cleanDb()
+    localUtil.CleanDB()
 }
 
 func TestPutUserSaltWithMultipleUsersMaintainsCorrectMapping(t *testing.T) {
@@ -59,7 +59,7 @@ func TestPutUserSaltWithMultipleUsersMaintainsCorrectMapping(t *testing.T) {
     if !reflect.DeepEqual(salt2, retrievedSalt2) {
         t.Fatalf("GetUserSalt does not return original salt2!\nOriginal Salt2: %s\n Retrieved Salt: %s", string(salt2), string(retrievedSalt2))
     }
-    cleanDb()
+    localUtil.CleanDB()
 }
 
 func TestPutUserWithADifferentSaltOverridesTheOldSalt(t *testing.T) {
@@ -78,7 +78,7 @@ func TestPutUserWithADifferentSaltOverridesTheOldSalt(t *testing.T) {
     if !reflect.DeepEqual(salt2, retrievedSalt) {
         t.Fatalf("GetUserSalt does not return the updated salt!\nExpected salt: %s\n Retrieved Salt: %s", string(salt2), string(retrievedSalt))
     }
-    cleanDb()
+    localUtil.CleanDB()
 }
 
 func TestRemoveUserSaltRemovesTheUserSaltFromTheMap(t *testing.T) {
@@ -97,11 +97,6 @@ func TestRemoveUserSaltRemovesTheUserSaltFromTheMap(t *testing.T) {
     if retrievedSalt != nil {
         t.Fatalf("Salt should not have been returned after retrieval. Retrieved salt: %s", string(retrievedSalt))
     }
-
-    cleanDb()
-}
-
-func cleanDb() {
-    os.RemoveAll(LOCAL_DIR)
+    localUtil.CleanDB()
 }
 
