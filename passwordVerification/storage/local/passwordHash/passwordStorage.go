@@ -1,15 +1,14 @@
 package passwordHash 
 
 import (
-	"bytes"
-	"encoding/gob"
 	"errors"
 	"log"
 	"os"
+    storageUtil "github.com/Ajahks/Passkie/passwordVerification/storage/local"
 )
 
-const LOCAL_DIR = "localDb" 
-const LOCAL_FILE_PATH = LOCAL_DIR + "/passwordDB.txt"
+const FILE_NAME = "passwordDB.txt"
+const LOCAL_FILE_PATH = storageUtil.LOCAL_DIR + "/" + FILE_NAME
 
 func PutPasswordHash(userhash string, passwordHash []byte) {
     data, err := os.ReadFile(LOCAL_FILE_PATH)
@@ -17,14 +16,13 @@ func PutPasswordHash(userhash string, passwordHash []byte) {
         userPasswordMap := make(map[string][]byte)
         userPasswordMap[userhash] = passwordHash 
 
-        writeMapToFile(userPasswordMap)
+        storageUtil.WriteMapToFile(userPasswordMap, FILE_NAME)
 
     } else {
-        userPasswordMap := deserializeFileDataForUserPasswordMap(data)
-
+        userPasswordMap := storageUtil.DeserializeFileData[[]byte](data) 
         userPasswordMap[userhash] = passwordHash 
 
-        writeMapToFile(userPasswordMap)
+        storageUtil.WriteMapToFile(userPasswordMap, FILE_NAME)
     }
 }
 
@@ -34,8 +32,7 @@ func GetPasswordHash(userhash string) ([]byte, error) {
         return nil, err 
     }
 
-    userPasswordMap := deserializeFileDataForUserPasswordMap(data)
-
+    userPasswordMap := storageUtil.DeserializeFileData[[]byte](data) 
     passwordHash, ok := userPasswordMap[userhash]
     if !ok {
         log.Printf("User %s does not exist in the DB!\n", userhash)
@@ -51,42 +48,9 @@ func RemovePasswordHash(userhash string) {
         log.Printf("Failed to read DB file: %s\n", err)
     }
  
-    userPasswordMap := deserializeFileDataForUserPasswordMap(data)
-
+    userPasswordMap := storageUtil.DeserializeFileData[[]byte](data) 
     delete(userPasswordMap, userhash)
 
-    writeMapToFile(userPasswordMap)
-}
-
-func deserializeFileDataForUserPasswordMap(data []byte) map[string][]byte {
-    b := bytes.NewBuffer(data)
-    d := gob.NewDecoder(b)
-
-    var decodedUserPasswordMap map[string][]byte
-    err := d.Decode(&decodedUserPasswordMap)
-    if err != nil {
-        panic(err)
-    }
-
-    return decodedUserPasswordMap 
-}
-
-func writeMapToFile(userPasswordMap map[string][]byte) {
-    os.Mkdir(LOCAL_DIR, os.ModePerm)
-    file, err := os.Create(LOCAL_FILE_PATH)
-    if err != nil {
-        log.Fatalf("failed creating file: %s", err)
-    }
-    defer file.Close()
-        
-    b := new(bytes.Buffer)
-    e := gob.NewEncoder(b)
-
-    err = e.Encode(userPasswordMap)
-    if err != nil {
-         panic(err)
-    }
-
-    file.Write(b.Bytes())
+    storageUtil.WriteMapToFile(userPasswordMap, FILE_NAME)
 }
 
