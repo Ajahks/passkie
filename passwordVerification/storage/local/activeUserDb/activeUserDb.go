@@ -46,6 +46,7 @@ func RemoveActiveUser(userhash string) {
     data, err := os.ReadFile(LOCAL_FILE_PATH)
     if err != nil {
         log.Printf("Failed to read DB file: %s\n", err)
+        return
     }
  
     activeUserMap := storageUtil.DeserializeFileData[bool](data) 
