@@ -46,6 +46,7 @@ func RemovePasswordHash(userhash string) {
     data, err := os.ReadFile(LOCAL_FILE_PATH)
     if err != nil {
         log.Printf("Failed to read DB file: %s\n", err)
+        return
     }
  
     userPasswordMap := storageUtil.DeserializeFileData[[]byte](data) 
