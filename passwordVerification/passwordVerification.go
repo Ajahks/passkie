@@ -10,7 +10,7 @@ import (
 	passwordDB "github.com/Ajahks/Passkie/passwordVerification/storage/local/passwordHash"
 )
 
-func SetPasswordForNewUser(masterPassword string, username string) error {
+func SetPasswordForNewUser(username string, masterPassword string) error {
     unsaltedUserHash := hash.HashUsername(username, "")
     if activeuserdb.IsUserHashActive(string(unsaltedUserHash)) {
         return errors.New("Failed to set password for new user: User already exists")
@@ -27,7 +27,7 @@ func SetPasswordForNewUser(masterPassword string, username string) error {
     return nil
 }
 
-func VerifyPasswordForUser(masterPassword string, username string) bool {
+func VerifyPasswordForUser(username string, masterPassword string) bool {
     hashedUser := hash.HashUsername(username, masterPassword)
 
     userHashSalt := salt.GetSaltForUserHash(hashedUser)
@@ -42,5 +42,29 @@ func VerifyPasswordForUser(masterPassword string, username string) bool {
         return true
     }
     return false
+}
+
+func UpdatePasswordForUser(username string, currentPassword string, newPassword string) error {
+    unsaltedUserHash := hash.HashUsername(username, "")
+    if !activeuserdb.IsUserHashActive(string(unsaltedUserHash)) {
+        return errors.New("Cannot update user password: User does not exist")
+    }
+
+    if !VerifyPasswordForUser(username, currentPassword) {
+        return errors.New("Cannot update user password: current password is incorrect")
+    }
+
+    newUserHash := hash.HashUsername(username, newPassword)
+    newUserSalt := salt.GetSaltForUserHash(newUserHash)
+    salt.PutSaltForUserHash(newUserHash, newUserSalt)
+
+    newPasswordhash := hash.HashPassword(newPassword, newUserSalt)
+    passwordDB.PutPasswordHash(string(newUserHash), newPasswordhash)
+
+    oldUserHash := hash.HashUsername(username, currentPassword)
+    salt.RemoveSaltForUserHash(oldUserHash)
+    passwordDB.RemovePasswordHash(string(oldUserHash))
+
+    return nil
 }
 
