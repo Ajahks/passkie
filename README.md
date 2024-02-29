@@ -14,6 +14,10 @@ This Golang module will provide encryption functions useful for encrypting and d
 
 PasswordVerification module will be used for verifying and storing the master password hash.
 
+### Storage
+
+Storage module and submodules will include functions that will interface with different storage options.  
+
 Will initially support a local DB via file IO.  But will eventually support plug in play DB's of your choice
 
 ### Testing the program
