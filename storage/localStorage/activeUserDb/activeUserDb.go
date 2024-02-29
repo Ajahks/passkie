@@ -4,11 +4,11 @@ import (
 	"log"
 	"os"
 
-	storageUtil "github.com/Ajahks/Passkie/passwordVerification/storage/local"
+	"github.com/Ajahks/Passkie/storage/localStorage"
 )
 
 const FILE_NAME = "activeUsers.txt"
-const LOCAL_FILE_PATH = storageUtil.LOCAL_DIR + "/" + FILE_NAME
+const LOCAL_FILE_PATH = localstorage.LOCAL_DIR + "/" + FILE_NAME
 
 func AddActiveUser(userhash string) {
     data, err := os.ReadFile(LOCAL_FILE_PATH)
@@ -16,13 +16,13 @@ func AddActiveUser(userhash string) {
         activeUserMap := make(map[string]bool)
         activeUserMap[userhash] = true 
 
-        storageUtil.WriteMapToFile(activeUserMap, FILE_NAME)
+        localstorage.WriteMapToFile(activeUserMap, FILE_NAME)
 
     } else {
-        activeUserMap := storageUtil.DeserializeFileData[bool](data) 
+        activeUserMap := localstorage.DeserializeFileData[bool](data) 
         activeUserMap[userhash] = true 
 
-        storageUtil.WriteMapToFile(activeUserMap, FILE_NAME)
+        localstorage.WriteMapToFile(activeUserMap, FILE_NAME)
     }
 }
 
@@ -32,7 +32,7 @@ func IsUserHashActive(userhash string) bool {
         return false 
     }
 
-    activeUserMap := storageUtil.DeserializeFileData[bool](data) 
+    activeUserMap := localstorage.DeserializeFileData[bool](data) 
     activeUser, ok := activeUserMap[userhash]
     if !ok {
         log.Printf("User %s does not exist in the DB!\n", userhash)
@@ -49,9 +49,9 @@ func RemoveActiveUser(userhash string) {
         return
     }
  
-    activeUserMap := storageUtil.DeserializeFileData[bool](data) 
+    activeUserMap := localstorage.DeserializeFileData[bool](data) 
     delete(activeUserMap, userhash)
 
-    storageUtil.WriteMapToFile(activeUserMap, FILE_NAME)
+    localstorage.WriteMapToFile(activeUserMap, FILE_NAME)
 }
 

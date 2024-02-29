@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-    localUtil "github.com/Ajahks/Passkie/passwordVerification/storage/local"
+    "github.com/Ajahks/Passkie/storage/localStorage"
 )
 
 func TestAddActiveUserCreatesANewDbFileIfNonExistent(t *testing.T) {
@@ -17,7 +17,7 @@ func TestAddActiveUserCreatesANewDbFileIfNonExistent(t *testing.T) {
         t.Fatalf("AddActiveUser did not create a new file: %s", LOCAL_FILE_PATH)        
     }
 
-    localUtil.CleanDB()
+    localstorage.CleanDB()
 }
 
 func TestAddActiveUserAndIsUserActiveReturnsTrueForNewlyActiveUser(t *testing.T) {
@@ -30,7 +30,7 @@ func TestAddActiveUserAndIsUserActiveReturnsTrueForNewlyActiveUser(t *testing.T)
         t.Fatal("Test user hash is not active in the DB")
     }
 
-    localUtil.CleanDB()
+    localstorage.CleanDB()
 }
 
 func TestIsUserActiveReturnsFalseForUserThatWasNeverAdded(t *testing.T) {
@@ -42,7 +42,7 @@ func TestIsUserActiveReturnsFalseForUserThatWasNeverAdded(t *testing.T) {
         t.Fatal("Test userhash should not be active in the DB")
     }
 
-    localUtil.CleanDB()
+    localstorage.CleanDB()
 }
 
 func TestAddActiveUserForMultipleUserShowsThatBothUsersAreActive(t *testing.T) {
@@ -61,13 +61,13 @@ func TestAddActiveUserForMultipleUserShowsThatBothUsersAreActive(t *testing.T) {
         t.Fatal("userhash2 was not active in the DB")
     }
 
-    localUtil.CleanDB()
+    localstorage.CleanDB()
 }
 
 func TestRemoveActiveUserForNonExistentUserDoesNotFail(t *testing.T) {
     RemoveActiveUser("testuserhash")
 
-    localUtil.CleanDB()
+    localstorage.CleanDB()
 }
 
 func TestAddActiveUserAndRemoveActiveUserRemovesUser(t *testing.T) {
@@ -81,7 +81,7 @@ func TestAddActiveUserAndRemoveActiveUserRemovesUser(t *testing.T) {
         t.Fatal("Removed user is still active in the DB")
     }
 
-    localUtil.CleanDB()
+    localstorage.CleanDB()
 }
 
 func TestAddActiveUsersAndRemoveOneUserDoesNotRemoveTheOther(t *testing.T) {
@@ -101,6 +101,6 @@ func TestAddActiveUsersAndRemoveOneUserDoesNotRemoveTheOther(t *testing.T) {
         t.Fatal("Non removed user is no longer active in DB")
     }
 
-    localUtil.CleanDB()
+    localstorage.CleanDB()
 }
 

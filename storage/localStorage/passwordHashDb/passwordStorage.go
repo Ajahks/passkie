@@ -1,14 +1,14 @@
-package passwordHash 
+package passwordHashDb 
 
 import (
 	"errors"
 	"log"
 	"os"
-    storageUtil "github.com/Ajahks/Passkie/passwordVerification/storage/local"
+    "github.com/Ajahks/Passkie/storage/localStorage"
 )
 
 const FILE_NAME = "passwordDB.txt"
-const LOCAL_FILE_PATH = storageUtil.LOCAL_DIR + "/" + FILE_NAME
+const LOCAL_FILE_PATH = localstorage.LOCAL_DIR + "/" + FILE_NAME
 
 func PutPasswordHash(userhash string, passwordHash []byte) {
     data, err := os.ReadFile(LOCAL_FILE_PATH)
@@ -16,13 +16,13 @@ func PutPasswordHash(userhash string, passwordHash []byte) {
         userPasswordMap := make(map[string][]byte)
         userPasswordMap[userhash] = passwordHash 
 
-        storageUtil.WriteMapToFile(userPasswordMap, FILE_NAME)
+        localstorage.WriteMapToFile(userPasswordMap, FILE_NAME)
 
     } else {
-        userPasswordMap := storageUtil.DeserializeFileData[[]byte](data) 
+        userPasswordMap := localstorage.DeserializeFileData[[]byte](data) 
         userPasswordMap[userhash] = passwordHash 
 
-        storageUtil.WriteMapToFile(userPasswordMap, FILE_NAME)
+        localstorage.WriteMapToFile(userPasswordMap, FILE_NAME)
     }
 }
 
@@ -32,7 +32,7 @@ func GetPasswordHash(userhash string) ([]byte, error) {
         return nil, err 
     }
 
-    userPasswordMap := storageUtil.DeserializeFileData[[]byte](data) 
+    userPasswordMap := localstorage.DeserializeFileData[[]byte](data) 
     passwordHash, ok := userPasswordMap[userhash]
     if !ok {
         log.Printf("User %s does not exist in the DB!\n", userhash)
@@ -49,9 +49,9 @@ func RemovePasswordHash(userhash string) {
         return
     }
  
-    userPasswordMap := storageUtil.DeserializeFileData[[]byte](data) 
+    userPasswordMap := localstorage.DeserializeFileData[[]byte](data) 
     delete(userPasswordMap, userhash)
 
-    storageUtil.WriteMapToFile(userPasswordMap, FILE_NAME)
+    localstorage.WriteMapToFile(userPasswordMap, FILE_NAME)
 }
 

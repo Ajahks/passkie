@@ -1,10 +1,10 @@
-package passwordHash 
+package passwordHashDb 
 
 import (
 	"os"
 	"reflect"
 	"testing"
-    localUtil "github.com/Ajahks/Passkie/passwordVerification/storage/local"
+    "github.com/Ajahks/Passkie/storage/localStorage"
 )
 
 func TestPutPasswordHashCreatesANewFileIfNonExistent(t *testing.T) {
@@ -17,7 +17,7 @@ func TestPutPasswordHashCreatesANewFileIfNonExistent(t *testing.T) {
     if err != nil {
         t.Fatalf("PutPasswordHash did not create a new file: %s", LOCAL_FILE_PATH)        
     }
-    localUtil.CleanDB()
+    localstorage.CleanDB()
 }
 
 func TestPutPasswordHashAndGetPasswordHashRetrievesTheOriginalPasswordHash(t *testing.T) {
@@ -33,7 +33,7 @@ func TestPutPasswordHashAndGetPasswordHashRetrievesTheOriginalPasswordHash(t *te
     if !reflect.DeepEqual(passwordHash, retrievedPasswordHash) {
         t.Fatalf("GetPasswordHash does not return original passwordHash!\nOriginal PasswordHash: %s\n Retrieved PasswordHash: %s", string(passwordHash), string(retrievedPasswordHash))
     }
-    localUtil.CleanDB()
+    localstorage.CleanDB()
 }
 
 func TestPutPasswordHashWithMultipleUsersMaintainsCorrectMapping(t *testing.T) {
@@ -59,7 +59,7 @@ func TestPutPasswordHashWithMultipleUsersMaintainsCorrectMapping(t *testing.T) {
     if !reflect.DeepEqual(passwordHash2, retrievedPasswordHash2) {
         t.Fatalf("GetPasswordHash does not return original passwordHash2!\nOriginal PasswordHash2: %s\n Retrieved PasswordHash: %s", string(passwordHash2), string(retrievedPasswordHash2))
     }
-    localUtil.CleanDB()
+    localstorage.CleanDB()
 }
 
 func TestPutUserWithADifferentPasswordHashOverridesTheOldPasswordHash(t *testing.T) {
@@ -78,7 +78,7 @@ func TestPutUserWithADifferentPasswordHashOverridesTheOldPasswordHash(t *testing
     if !reflect.DeepEqual(passwordHash2, retrievedPasswordHash) {
         t.Fatalf("GetPasswordHash does not return the updated passwordHash!\nExpected passwordHash: %s\n Retrieved PasswordHash: %s", string(passwordHash2), string(retrievedPasswordHash))
     }
-    localUtil.CleanDB()
+    localstorage.CleanDB()
 }
 
 func TestRemovePasswordHashRemovesTheUserPasswordHashFromTheMap(t *testing.T) {
@@ -97,6 +97,6 @@ func TestRemovePasswordHashRemovesTheUserPasswordHashFromTheMap(t *testing.T) {
     if retrievedPasswordHash != nil {
         t.Fatalf("PasswordHash should not have been returned after retrieval. Retrieved passwordHash: %s", string(retrievedPasswordHash))
     }
-    localUtil.CleanDB()
+    localstorage.CleanDB()
 }
 

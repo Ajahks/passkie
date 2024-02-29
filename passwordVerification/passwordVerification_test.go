@@ -3,7 +3,7 @@ package passwordverification
 import (
 	"testing"
 
-	"github.com/Ajahks/Passkie/passwordVerification/storage/local"
+	"github.com/Ajahks/Passkie/storage/localStorage"
 )
 
 func TestSetPasswordForNewUserTwiceFails(t *testing.T) {
@@ -19,7 +19,7 @@ func TestSetPasswordForNewUserTwiceFails(t *testing.T) {
         t.Error("Setting password for the same user a second time should have returned an error")
     }
 
-    local.CleanDB()
+    localstorage.CleanDB()
 }
 
 func TestSetPasswordForNewUserThenVerifyPasswordWithCorrectPasswordReturnsTrue(t *testing.T) {
@@ -36,7 +36,7 @@ func TestSetPasswordForNewUserThenVerifyPasswordWithCorrectPasswordReturnsTrue(t
         t.Error("Password is deemed incorrect for the user")
     }
 
-    local.CleanDB()
+    localstorage.CleanDB()
 }
 
 func TestSetPasswordForNewUserThenVerifyPasswordWithWrongPasswordReturnsFalse(t *testing.T) {
@@ -53,7 +53,7 @@ func TestSetPasswordForNewUserThenVerifyPasswordWithWrongPasswordReturnsFalse(t 
         t.Error("Password is deemed correct for the user when it isn't")
     }
 
-    local.CleanDB()
+    localstorage.CleanDB()
 }
 
 func TestUpdatePasswordForUserThenVerifyNewPasswordSucceeds(t *testing.T) {
@@ -71,7 +71,7 @@ func TestUpdatePasswordForUserThenVerifyNewPasswordSucceeds(t *testing.T) {
         t.Error("New password is failing to verify after password update")
     }
 
-    local.CleanDB()
+    localstorage.CleanDB()
 }
 
 func TestUpdatePasswordForUserThenVerifyOldPasswordFails(t *testing.T) {
@@ -89,7 +89,7 @@ func TestUpdatePasswordForUserThenVerifyOldPasswordFails(t *testing.T) {
         t.Error("First password should no longer work after update but it is still working!")
     }
 
-    local.CleanDB()
+    localstorage.CleanDB()
 }
 
 func TestUpdatePasswordForUserWithNewUserThrowsError(t *testing.T) {
@@ -102,7 +102,7 @@ func TestUpdatePasswordForUserWithNewUserThrowsError(t *testing.T) {
         t.Errorf("Updating password for new user should have thrown an error")
     }
 
-    local.CleanDB()
+    localstorage.CleanDB()
 }
 
 func TestUpdatePasswordForUserWithWrongCurrentPasswordFails(t *testing.T) {
@@ -116,6 +116,6 @@ func TestUpdatePasswordForUserWithWrongCurrentPasswordFails(t *testing.T) {
         t.Errorf("Updating password for wrong current password should have thrown an error")
     }
 
-    local.CleanDB()
+    localstorage.CleanDB()
 }
 

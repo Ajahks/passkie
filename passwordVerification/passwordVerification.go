@@ -6,8 +6,8 @@ import (
 
 	"github.com/Ajahks/Passkie/passwordVerification/hash"
 	"github.com/Ajahks/Passkie/passwordVerification/salt"
-	"github.com/Ajahks/Passkie/passwordVerification/storage/local/activeUserDb"
-	passwordDB "github.com/Ajahks/Passkie/passwordVerification/storage/local/passwordHash"
+	"github.com/Ajahks/Passkie/storage/localStorage/activeUserDb"
+	"github.com/Ajahks/Passkie/storage/localStorage/passwordHashDb"
 )
 
 func SetPasswordForNewUser(username string, masterPassword string) error {
@@ -22,7 +22,7 @@ func SetPasswordForNewUser(username string, masterPassword string) error {
     salt.PutSaltForUserHash(userhash, usersalt)
 
     passwordhash := hash.HashPassword(masterPassword, usersalt)
-    passwordDB.PutPasswordHash(string(userhash), passwordhash)
+    passwordHashDb.PutPasswordHash(string(userhash), passwordhash)
 
     return nil
 }
@@ -33,7 +33,7 @@ func VerifyPasswordForUser(username string, masterPassword string) bool {
     userHashSalt := salt.GetSaltForUserHash(hashedUser)
     passwordHash := hash.HashPassword(masterPassword, userHashSalt)
 
-    savedPasswordHash, err := passwordDB.GetPasswordHash(string(hashedUser)) 
+    savedPasswordHash, err := passwordHashDb.GetPasswordHash(string(hashedUser)) 
     if err != nil {
         return false 
     }
@@ -59,11 +59,11 @@ func UpdatePasswordForUser(username string, currentPassword string, newPassword 
     salt.PutSaltForUserHash(newUserHash, newUserSalt)
 
     newPasswordhash := hash.HashPassword(newPassword, newUserSalt)
-    passwordDB.PutPasswordHash(string(newUserHash), newPasswordhash)
+    passwordHashDb.PutPasswordHash(string(newUserHash), newPasswordhash)
 
     oldUserHash := hash.HashUsername(username, currentPassword)
     salt.RemoveSaltForUserHash(oldUserHash)
-    passwordDB.RemovePasswordHash(string(oldUserHash))
+    passwordHashDb.RemovePasswordHash(string(oldUserHash))
 
     return nil
 }

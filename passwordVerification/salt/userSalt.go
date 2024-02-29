@@ -3,13 +3,13 @@ package salt
 import (
 	"crypto/rand"
 
-	db "github.com/Ajahks/Passkie/passwordVerification/storage/local/userSalt"
+	"github.com/Ajahks/Passkie/storage/localStorage/userSaltDb"
 )
 
 func GetSaltForUserHash(userHash []byte) []byte {
     userHashString := string(userHash)
 
-    salt, err := db.GetUserSalt(userHashString)
+    salt, err := userSaltDb.GetUserSalt(userHashString)
     if err != nil {
         newSalt := generateRandomSalt()
 
@@ -35,11 +35,11 @@ func generateRandomSalt() []byte {
 
 func PutSaltForUserHash(userHash []byte, salt []byte) {
     userHashString := string(userHash)
-    db.PutUserSalt(userHashString, salt)
+    userSaltDb.PutUserSalt(userHashString, salt)
 }
 
 func RemoveSaltForUserHash(userHash []byte) {
     userHashString := string(userHash)
-    db.RemoveUserSalt(userHashString)
+    userSaltDb.RemoveUserSalt(userHashString)
 }
 

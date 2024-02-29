@@ -1,14 +1,14 @@
-package userSalt 
+package userSaltDb 
 
 import (
 	"errors"
 	"log"
 	"os"
-    storageUtil "github.com/Ajahks/Passkie/passwordVerification/storage/local"
+    "github.com/Ajahks/Passkie/storage/localStorage"
 )
 
 const FILE_PATH = "userSaltDB.txt"
-const LOCAL_FILE_PATH = storageUtil.LOCAL_DIR + "/" + FILE_PATH
+const LOCAL_FILE_PATH = localstorage.LOCAL_DIR + "/" + FILE_PATH
 
 // Stores user salts on a local file
 func PutUserSalt(userhash string, salt []byte) {
@@ -17,14 +17,14 @@ func PutUserSalt(userhash string, salt []byte) {
         userSaltMap := make(map[string][]byte)
         userSaltMap[userhash] = salt
 
-        storageUtil.WriteMapToFile(userSaltMap, FILE_PATH)
+        localstorage.WriteMapToFile(userSaltMap, FILE_PATH)
 
     } else {
-        userSaltMap := storageUtil.DeserializeFileData[[]byte](data)
+        userSaltMap := localstorage.DeserializeFileData[[]byte](data)
 
         userSaltMap[userhash] = salt
 
-        storageUtil.WriteMapToFile(userSaltMap, FILE_PATH)
+        localstorage.WriteMapToFile(userSaltMap, FILE_PATH)
     }
 }
 
@@ -35,7 +35,7 @@ func GetUserSalt(userhash string) ([]byte, error) {
         return nil, err 
     }
 
-    userSaltMap := storageUtil.DeserializeFileData[[]byte](data)
+    userSaltMap := localstorage.DeserializeFileData[[]byte](data)
 
     salt, ok := userSaltMap[userhash]
     if !ok {
@@ -54,10 +54,10 @@ func RemoveUserSalt(userhash string) {
         return
     }
  
-    userSaltMap := storageUtil.DeserializeFileData[[]byte](data)
+    userSaltMap := localstorage.DeserializeFileData[[]byte](data)
 
     delete(userSaltMap, userhash)
 
-    storageUtil.WriteMapToFile(userSaltMap, FILE_PATH)
+    localstorage.WriteMapToFile(userSaltMap, FILE_PATH)
 }
 
