@@ -13,9 +13,15 @@ func CleanDB() {
     os.RemoveAll(LOCAL_DIR)
 }
 
-func WriteMapToFile[V any](dataMap map[string]V, filename string) {
+func WriteMapToFile[V any](dataMap map[string]V, filename string, subdirectories ...string) {
     os.Mkdir(LOCAL_DIR, os.ModePerm)
-    localFilePath := LOCAL_DIR + "/" + filename
+    localFilePath := LOCAL_DIR
+    for _, subdirectory := range subdirectories {
+        localFilePath = localFilePath + "/" + subdirectory
+        os.Mkdir(localFilePath, os.ModePerm)
+    }
+    localFilePath = localFilePath + "/" + filename
+
     file, err := os.Create(localFilePath)
     if err != nil {
         log.Fatalf("failed creating file: %s", err)
