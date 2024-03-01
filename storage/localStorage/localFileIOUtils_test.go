@@ -38,6 +38,40 @@ func TestWriteMapToFileCreatesAFile(t *testing.T) {
     CleanDB()
 }
 
+func TestWriteToFileWithOneSubdirectoryCreatesNestedFile(t *testing.T) {
+    testMap := map[string]string{"test":"value"} 
+    filename := "testFile.txt"
+    subdirectory := "test"
+    localFilePath := LOCAL_DIR + "/" + subdirectory + "/" + filename 
+
+    WriteMapToFile[string](testMap, filename, subdirectory)
+
+    _, err := os.ReadFile(localFilePath)
+    if err != nil {
+        t.Errorf("WriteMapToFile failed to generate file in correct path: %s", localFilePath)
+ 
+    }
+
+    CleanDB()
+}
+
+func TestWriteToFileWithMultipleSubdirectoriesCreatesNestedFile(t *testing.T) {
+    testMap := map[string]string{"test":"value"} 
+    filename := "testFile.txt"
+    subdirectory1 := "test"
+    subdirectory2 := "test2"
+    localFilePath := LOCAL_DIR + "/" + subdirectory1 + "/" + subdirectory2 + "/" + filename 
+
+    WriteMapToFile[string](testMap, filename, subdirectory1, subdirectory2)
+
+    _, err := os.ReadFile(localFilePath)
+    if err != nil {
+        t.Errorf("WriteMapToFile failed to generate file in correct path: %s", localFilePath)
+ 
+    }
+
+    CleanDB()
+}
 
 func TestWriteMapToFileAndDeserializeFileDataOfFileGetsOriginalData(t *testing.T) {
     testMap := map[string]string{"test":"value"} 
