@@ -74,6 +74,33 @@ func TestPutCredentialsForSiteHashTwiceReturnsMostRecentUpdateWhenGet(t *testing
     }
 }
 
+func TestPutCredentialsForSiteHashWithDifferentUsersMaintainTheMappings(t *testing.T) {
+    defer localstorage.CleanDB()
+    sitehash := "testSiteHash"
+    username1 := "testUsername1"
+    username2 := "testUsername2"
+    credentials1 := []byte("test1")
+    credentials2 := []byte("test2")
+
+    PutCredentialsForSiteHash(sitehash, username1, credentials1)
+    PutCredentialsForSiteHash(sitehash, username2, credentials2)
+    result1, err := GetCredentialsForSiteHash(sitehash, username1)
+    if err != nil {
+        t.Fatalf("Error while reading credentials for user %s for site.  Error: %v", username1, err)
+    }
+    result2, err := GetCredentialsForSiteHash(sitehash, username2)
+    if err != nil {
+        t.Fatalf("Error while reading credentials for user %s for site.  Error: %v", username2, err)
+    }
+
+    if !bytes.Equal(credentials1, result1) {
+        t.Fatalf("Returned credentials for user %s do not match credentials! Expected: %s, Received: %s", username1, string(credentials1), string(result1)) 
+    }
+    if !bytes.Equal(credentials2, result2) {
+        t.Fatalf("Returned credentials for user %s do not match credentials! Expected: %s, Received: %s", username2, string(credentials2), string(result2)) 
+    }
+}
+
 func TestRemoveCredentialsForSiteHash(t *testing.T) {
     defer localstorage.CleanDB()
     sitehash := "testSiteHash"
