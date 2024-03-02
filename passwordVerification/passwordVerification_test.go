@@ -3,7 +3,7 @@ package passwordverification
 import (
 	"testing"
 
-	"github.com/Ajahks/Passkie/storage/localStorage"
+	"github.com/Ajahks/passkie/storage/localStorage"
 )
 
 func TestSetPasswordForNewUserTwiceFails(t *testing.T) {

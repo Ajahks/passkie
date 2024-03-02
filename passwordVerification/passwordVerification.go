@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"errors"
 
-	"github.com/Ajahks/Passkie/passwordVerification/hash"
-	"github.com/Ajahks/Passkie/passwordVerification/salt"
-	"github.com/Ajahks/Passkie/storage/localStorage/activeUserDb"
-	"github.com/Ajahks/Passkie/storage/localStorage/passwordHashDb"
+	"github.com/Ajahks/passkie/passwordVerification/hash"
+	"github.com/Ajahks/passkie/passwordVerification/salt"
+	"github.com/Ajahks/passkie/storage/localStorage/activeUserDb"
+	"github.com/Ajahks/passkie/storage/localStorage/passwordHashDb"
 )
 
 func SetPasswordForNewUser(username string, masterPassword string) error {

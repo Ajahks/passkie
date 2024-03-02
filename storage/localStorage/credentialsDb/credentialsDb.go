@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	localstorage "github.com/Ajahks/Passkie/storage/localStorage"
+	localstorage "github.com/Ajahks/passkie/storage/localStorage"
 )
 
 const FILE_NAME = "credentialsDB.txt"

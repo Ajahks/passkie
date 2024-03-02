@@ -1,4 +1,4 @@
-module github.com/Ajahks/Passkie
+module github.com/Ajahks/passkie
 
 go 1.21.5
 

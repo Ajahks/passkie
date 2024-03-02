@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-    "github.com/Ajahks/Passkie/storage/localStorage"
+    "github.com/Ajahks/passkie/storage/localStorage"
 )
 
 func TestAddActiveUserCreatesANewDbFileIfNonExistent(t *testing.T) {

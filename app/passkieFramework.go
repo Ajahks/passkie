@@ -4,10 +4,10 @@ import (
 	"errors"
 	"log"
 
-	"github.com/Ajahks/Passkie/credentialEncryption/encryption"
-	"github.com/Ajahks/Passkie/credentialEncryption/hash"
-	passwordverification "github.com/Ajahks/Passkie/passwordVerification"
-	"github.com/Ajahks/Passkie/storage/localStorage/credentialsDb"
+	"github.com/Ajahks/passkie/credentialEncryption/encryption"
+	"github.com/Ajahks/passkie/credentialEncryption/hash"
+	passwordverification "github.com/Ajahks/passkie/passwordVerification"
+	"github.com/Ajahks/passkie/storage/localStorage/credentialsDb"
 )
 
 func StoreCredentialsForSite(

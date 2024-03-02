@@ -4,7 +4,7 @@ import (
 	"os"
 	"reflect"
 	"testing"
-    "github.com/Ajahks/Passkie/storage/localStorage"
+    "github.com/Ajahks/passkie/storage/localStorage"
 )
 
 func TestPutPasswordHashCreatesANewFileIfNonExistent(t *testing.T) {

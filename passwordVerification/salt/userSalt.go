@@ -3,7 +3,7 @@ package salt
 import (
 	"crypto/rand"
 
-	"github.com/Ajahks/Passkie/storage/localStorage/userSaltDb"
+	"github.com/Ajahks/passkie/storage/localStorage/userSaltDb"
 )
 
 func GetSaltForUserHash(userHash []byte) []byte {

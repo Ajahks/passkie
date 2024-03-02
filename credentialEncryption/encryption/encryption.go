@@ -6,7 +6,7 @@ import (
 	"crypto/cipher"
 	"crypto/rand"
 	"encoding/gob"
-	passkieHash "github.com/Ajahks/Passkie/credentialEncryption/hash"
+	passkieHash "github.com/Ajahks/passkie/credentialEncryption/hash"
 	"log"
 )
 

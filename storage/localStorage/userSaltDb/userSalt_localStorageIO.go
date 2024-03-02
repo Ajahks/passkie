@@ -4,7 +4,7 @@ import (
 	"errors"
 	"log"
 	"os"
-    "github.com/Ajahks/Passkie/storage/localStorage"
+    "github.com/Ajahks/passkie/storage/localStorage"
 )
 
 const FILE_PATH = "userSaltDB.txt"
