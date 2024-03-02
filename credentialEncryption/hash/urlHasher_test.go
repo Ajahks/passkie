@@ -7,7 +7,7 @@ import (
 
 func TestUrlHash(t *testing.T) {
     url := "testurl.com"
-    salt := []byte("TestSalt")
+    salt := "TestSalt"
 
     hashedUrl := HashUrl(url, salt)
 
@@ -22,8 +22,8 @@ func TestUrlHash(t *testing.T) {
 
 func TestUrlHashWithDifferentSaltShouldHashToDifferentValue(t *testing.T) {
     url := "testurl.com"
-    salt1 := []byte("TestSalt")
-    salt2 := []byte("TestSalt2")
+    salt1 := "TestSalt"
+    salt2 := "TestSalt2"
 
     hashedUrl1 := HashUrl(url, salt1)
     hashedUrl2 := HashUrl(url, salt2)
@@ -39,8 +39,8 @@ func TestUrlHashWithDifferentSaltShouldHashToDifferentValue(t *testing.T) {
 
 func TestUrlHashWithSameSaltShouldResultInTheSameHashValue(t *testing.T) {
     url := "testurl.com"
-    salt1 := []byte("TestSalt")
-    salt2 := []byte("TestSalt")
+    salt1 := "TestSalt"
+    salt2 := "TestSalt"
 
     hashedUrl1 := HashUrl(url, salt1)
     hashedUrl2 := HashUrl(url, salt2)

@@ -2,10 +2,11 @@ package hash
 
 import "crypto/sha256"
 
-func HashUrl(url string, salt []byte) []byte {
+func HashUrl(url string, masterPassword string) []byte {
     h := sha256.New()
     urlBytes := []byte(url)
-    saltedUrlBytes := append(urlBytes, salt...)
+    hashedPassword := HashPassword(masterPassword)
+    saltedUrlBytes := append(urlBytes, hashedPassword...)
     h.Write(saltedUrlBytes) 
 
     hashedUrl := h.Sum(nil)
