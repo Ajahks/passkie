@@ -9,7 +9,7 @@ import (
 	"golang.org/x/term"
 )
 
-var user string
+var initUser string
 
 // initCmd represents the init command
 var initCmd = &cobra.Command{
@@ -20,7 +20,7 @@ var initCmd = &cobra.Command{
 User must enter a master password twice.  User must also not be already created.
     `,
 	Run: func(cmd *cobra.Command, args []string) {
-        fmt.Printf("Initializing with username: %s\n", user)
+        fmt.Printf("Initializing with username: %s\n", initUser)
 
         fmt.Println("Enter a master password:")
         password, err := term.ReadPassword(0)
@@ -42,12 +42,12 @@ User must enter a master password twice.  User must also not be already created.
             return 
         }
 
-        err = passkieApp.CreateNewUser(user, string(password))
+        err = passkieApp.CreateNewUser(initUser, string(password))
         if err != nil {
             fmt.Printf("Error found creating user: %v\n", err)
             return
         }
-        fmt.Printf("User %s successfuly created!", user)
+        fmt.Printf("User %s successfuly created!", initUser)
 	},
 }
 
@@ -62,5 +62,5 @@ func validatePassword(password []byte) bool {
 
 func init() {
 	rootCmd.AddCommand(initCmd)
-    initCmd.Flags().StringVarP(&user, "user", "u", "default", "passkie username Default:'default'")
+    initCmd.Flags().StringVarP(&initUser, "user", "u", "default", "passkie username Default:'default'")
 }
