@@ -27,7 +27,7 @@ func verifyMasterPasswordWorkflow() (string, error) {
         fmt.Println("Incorrect password try again!")
     }
     
-    fmt.Println("Master password was incorrect 3 times! Ending session")
+    fmt.Println("Master password was incorrect 3 times! User may also be incorrect. Ending session, try again")
     return "", errors.New("Incorrect master password")
 }
 

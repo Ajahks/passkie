@@ -2,7 +2,6 @@ package passkieApp
 
 import (
 	"errors"
-	"log"
 
 	"github.com/Ajahks/passkie/credentialEncryption/encryption"
 	"github.com/Ajahks/passkie/credentialEncryption/hash"
@@ -18,8 +17,7 @@ func StoreCredentialsForSite(
 ) error {
     ok := passwordverification.VerifyPasswordForUser(username, masterPassword)
     if !ok {
-        log.Printf("Cannot store credentials because masterPassword for user is incorrect!\n")
-        return errors.New("InvalidMasterPassword")
+        return errors.New("InvalidMasterPassword: Cannot store credentials because masterPassword for user is incorrect!")
     }
 
     hashedSite := hash.HashUrl(siteBaseUrl, masterPassword)
@@ -32,14 +30,12 @@ func StoreCredentialsForSite(
 func RetrieveCredentialsForSite(siteBaseUrl string, username string, masterPassword string) (map[string]string, error) {
     ok := passwordverification.VerifyPasswordForUser(username, masterPassword)
     if !ok {
-        log.Printf("Cannot store credentials because masterPassword for user is incorrect!\n")
-        return nil, errors.New("InvalidMasterPassword")
+        return nil, errors.New("InvalidMasterPassword: Cannot store credentials because masterPassword for user is incorrect!")
     }
 
     hashedSite := hash.HashUrl(siteBaseUrl, masterPassword)
     encryptedCredentials, err := credentialsDb.GetCredentialsForSiteHash(string(hashedSite), username)
     if err != nil {
-        log.Println("Failed to retrieve credentials for site!")
         return nil, err
     }
 
@@ -50,7 +46,6 @@ func RetrieveCredentialsForSite(siteBaseUrl string, username string, masterPassw
 func CreateNewUser(username string, masterPassword string) error {
     err := passwordverification.SetPasswordForNewUser(username, masterPassword) 
     if err != nil {
-        log.Printf("Failed to create new user: %s\n", username)
         return err 
     }
 

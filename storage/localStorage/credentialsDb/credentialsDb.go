@@ -3,7 +3,6 @@ package credentialsDb
 import (
 	"encoding/base64"
 	"errors"
-	"log"
 	"os"
 
 	localstorage "github.com/Ajahks/passkie/storage/localStorage"
@@ -45,23 +44,22 @@ func GetCredentialsForSiteHash(sitehash string, username string) ([]byte, error)
     siteCredentialsMap := localstorage.DeserializeFileData[[]byte](data) 
     encryptedCredentials, ok := siteCredentialsMap[sitehash]
     if !ok {
-        log.Printf("Site %s does not exist in the DB!\n", sitehash)
         return nil, errors.New("Site does not exist in the DB!")
     }
 
     return encryptedCredentials, nil
 }
 
-func RemoveCredentialsForSiteHash(sitehash string, username string) {
+func RemoveCredentialsForSiteHash(sitehash string, username string) error {
     data, err := os.ReadFile(getLocalFilePath(username))
     if err != nil {
-        log.Printf("Failed to read DB file: %s\n", err)
-        return
+        return err
     }
  
     siteCredentialsMap := localstorage.DeserializeFileData[[]byte](data) 
     delete(siteCredentialsMap, sitehash)
 
     localstorage.WriteMapToFile(siteCredentialsMap, FILE_NAME, getEncodedUsername(username))
+    return nil
 }
 

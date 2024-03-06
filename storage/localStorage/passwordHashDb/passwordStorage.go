@@ -2,7 +2,6 @@ package passwordHashDb
 
 import (
 	"errors"
-	"log"
 	"os"
     "github.com/Ajahks/passkie/storage/localStorage"
 )
@@ -35,23 +34,22 @@ func GetPasswordHash(userhash string) ([]byte, error) {
     userPasswordMap := localstorage.DeserializeFileData[[]byte](data) 
     passwordHash, ok := userPasswordMap[userhash]
     if !ok {
-        log.Printf("User %s does not exist in the DB!\n", userhash)
         return nil, errors.New("User does not exist in the DB!")
     }
 
     return passwordHash, nil
 }
 
-func RemovePasswordHash(userhash string) {
+func RemovePasswordHash(userhash string) error {
     data, err := os.ReadFile(LOCAL_FILE_PATH)
     if err != nil {
-        log.Printf("Failed to read DB file: %s\n", err)
-        return
+        return err 
     }
  
     userPasswordMap := localstorage.DeserializeFileData[[]byte](data) 
     delete(userPasswordMap, userhash)
 
     localstorage.WriteMapToFile(userPasswordMap, FILE_NAME)
+    return nil
 }
 
