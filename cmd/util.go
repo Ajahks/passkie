@@ -3,6 +3,7 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	passwordverification "github.com/Ajahks/passkie/passwordVerification"
 	"golang.org/x/term"
@@ -21,7 +22,8 @@ func verifyMasterPasswordWorkflow() (string, error) {
             continue
         }
 
-        if passwordverification.VerifyPasswordForUser(user, string(password)) {
+        userLower := strings.ToLower(user)
+        if passwordverification.VerifyPasswordForUser(userLower, string(password)) {
             return string(password), nil 
         }
         fmt.Println("Incorrect password try again!")

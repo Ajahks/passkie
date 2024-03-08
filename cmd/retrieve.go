@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"fmt"
+	"strings"
 
 	passkieApp "github.com/Ajahks/passkie/app"
 	"github.com/spf13/cobra"
@@ -23,7 +24,8 @@ The master password will be asked by the cli and verified.
 If credentials exist, will return those credentials.
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-        fmt.Printf("Retrieving credentials for user: %s\n", user)
+        userLower := strings.ToLower(user)
+        fmt.Printf("Retrieving credentials for user: %s\n", userLower)
         fmt.Printf("Retrieving credentials for site: %s\n", url)
 
         password, err := verifyMasterPasswordWorkflow() 
@@ -31,7 +33,7 @@ If credentials exist, will return those credentials.
             return
         }
 
-        credentials, err := passkieApp.RetrieveCredentialsForSite(url, user, password)
+        credentials, err := passkieApp.RetrieveCredentialsForSite(url, userLower, password)
         if err != nil {
             fmt.Printf("Failed to read credentials for site %s: %v\n", url, err)
             return
@@ -48,3 +50,4 @@ func init() {
     retrieveCmd.Flags().StringVarP(&url, "site", "s", "", "Base url to retrieve credentials for (Ex: http://example.com/, https://test.com/) REQUIRED")
     retrieveCmd.MarkFlagRequired("site")
 }
+

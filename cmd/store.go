@@ -7,6 +7,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 
 	passkieApp "github.com/Ajahks/passkie/app"
 	"github.com/spf13/cobra"
@@ -29,9 +30,8 @@ When the workflow starts, it will be a series of questions for the user.
 - Credentials will be stored
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("storeCredentials called")
-
-        fmt.Printf("Storing credentials for user: %s\n", user)
+        userLower := strings.ToLower(user) 
+        fmt.Printf("Storing credentials for user: %s\n", userLower)
         fmt.Printf("Storing credentials for url: %s\n", url)
         password, err := verifyMasterPasswordWorkflow() 
         if err != nil {
@@ -41,7 +41,7 @@ When the workflow starts, it will be a series of questions for the user.
         credentialsMap := inputCredentialsWorkflow()
 
         fmt.Println("Storing credentials for url!")
-        passkieApp.StoreCredentialsForSite(url, user, password, credentialsMap)
+        passkieApp.StoreCredentialsForSite(url, userLower, password, credentialsMap)
 	},
 }
 
