@@ -19,8 +19,8 @@ var initCmd = &cobra.Command{
 User must enter a master password twice.  User must also not be already created.
     `,
 	Run: func(cmd *cobra.Command, args []string) {
-        userLower := strings.ToLower(user)
-        fmt.Printf("Initializing with username: %s\n", userLower)
+        user = strings.ToLower(user)
+        fmt.Printf("Initializing with username: %s\n", user)
 
         fmt.Println("Enter a master password:")
         password, err := term.ReadPassword(0)
@@ -42,12 +42,12 @@ User must enter a master password twice.  User must also not be already created.
             return 
         }
 
-        err = passkieApp.CreateNewUser(userLower, string(password))
+        err = passkieApp.CreateNewUser(user, string(password))
         if err != nil {
             fmt.Printf("Error found creating user: %v\n", err)
             return
         }
-        fmt.Printf("User %s successfuly created!", userLower)
+        fmt.Printf("User %s successfuly created!", user)
 	},
 }
 

@@ -24,8 +24,8 @@ The master password will be asked by the cli and verified.
 If credentials exist, will return those credentials.
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-        userLower := strings.ToLower(user)
-        fmt.Printf("Retrieving credentials for user: %s\n", userLower)
+        user = strings.ToLower(user)
+        fmt.Printf("Retrieving credentials for user: %s\n", user)
         fmt.Printf("Retrieving credentials for site: %s\n", url)
 
         password, err := verifyMasterPasswordWorkflow() 
@@ -33,7 +33,7 @@ If credentials exist, will return those credentials.
             return
         }
 
-        credentials, err := passkieApp.RetrieveCredentialsForSite(url, userLower, password)
+        credentials, err := passkieApp.RetrieveCredentialsForSite(url, user, password)
         if err != nil {
             fmt.Printf("Failed to read credentials for site %s: %v\n", url, err)
             return

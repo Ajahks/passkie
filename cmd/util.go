@@ -22,8 +22,8 @@ func verifyMasterPasswordWorkflow() (string, error) {
             continue
         }
 
-        userLower := strings.ToLower(user)
-        if passwordverification.VerifyPasswordForUser(userLower, string(password)) {
+        user = strings.ToLower(user)
+        if passwordverification.VerifyPasswordForUser(user, string(password)) {
             return string(password), nil 
         }
         fmt.Println("Incorrect password try again!")

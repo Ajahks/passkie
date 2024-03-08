@@ -30,8 +30,8 @@ When the workflow starts, it will be a series of questions for the user.
 - Credentials will be stored
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-        userLower := strings.ToLower(user) 
-        fmt.Printf("Storing credentials for user: %s\n", userLower)
+        user = strings.ToLower(user) 
+        fmt.Printf("Storing credentials for user: %s\n", user)
         fmt.Printf("Storing credentials for url: %s\n", url)
         password, err := verifyMasterPasswordWorkflow() 
         if err != nil {
@@ -41,7 +41,7 @@ When the workflow starts, it will be a series of questions for the user.
         credentialsMap := inputCredentialsWorkflow()
 
         fmt.Println("Storing credentials for url!")
-        passkieApp.StoreCredentialsForSite(url, userLower, password, credentialsMap)
+        passkieApp.StoreCredentialsForSite(url, user, password, credentialsMap)
 	},
 }
 
