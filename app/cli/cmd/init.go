@@ -47,7 +47,7 @@ User must enter a master password twice.  User must also not be already created.
             fmt.Printf("Error found creating user: %v\n", err)
             return
         }
-        fmt.Printf("User %s successfuly created!", user)
+        fmt.Printf("User %s successfuly created!\n", user)
 	},
 }
 

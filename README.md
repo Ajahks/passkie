@@ -2,7 +2,42 @@
 
 Passkie is an open source password manager application.  It will encrypt passwords using a master password and can store them per base url.
 
-Passkie is broken up into multiple sub modules
+## CLI Application
+
+### Building
+
+To build the Passkie CLI application from the source code run:
+
+```
+go build -o passkie ./app/cli
+```
+
+### Usage
+
+This will create an executable named 'passkie'.  To run the application via the exectuable run.  This will provide usage details for the application.
+
+```
+./passkie
+```
+
+For first time users, a user will need to be initialized.  To initialize a user as 'default' omit the user parameter
+```
+./passkie init --user <username (default)>
+```
+
+Once the user has been initialized, credentials can now be stored per site
+```
+./passkie store --user <username (default)> --site <base url (required)>
+```
+
+To retrieve the credentials
+```
+./passkie retrieve --user <username (default)> --site <base url (required)>
+```
+
+## Passkie Framework
+
+The passkie framework is broken up into multiple sub modules
 
 ### CredentialEncryption
 
