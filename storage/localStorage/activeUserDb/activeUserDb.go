@@ -1,7 +1,6 @@
 package activeuserdb
 
 import (
-	"log"
 	"os"
 
 	"github.com/Ajahks/passkie/storage/localStorage"
@@ -35,23 +34,22 @@ func IsUserHashActive(userhash string) bool {
     activeUserMap := localstorage.DeserializeFileData[bool](data) 
     activeUser, ok := activeUserMap[userhash]
     if !ok {
-        log.Printf("User %s does not exist in the DB!\n", userhash)
         return false 
     }
 
     return activeUser
 }
 
-func RemoveActiveUser(userhash string) {
+func RemoveActiveUser(userhash string) error {
     data, err := os.ReadFile(LOCAL_FILE_PATH)
     if err != nil {
-        log.Printf("Failed to read DB file: %s\n", err)
-        return
+        return err
     }
  
     activeUserMap := localstorage.DeserializeFileData[bool](data) 
     delete(activeUserMap, userhash)
 
     localstorage.WriteMapToFile(activeUserMap, FILE_NAME)
+    return nil
 }
 

@@ -2,7 +2,6 @@ package userSaltDb
 
 import (
 	"errors"
-	"log"
 	"os"
     "github.com/Ajahks/passkie/storage/localStorage"
 )
@@ -39,7 +38,6 @@ func GetUserSalt(userhash string) ([]byte, error) {
 
     salt, ok := userSaltMap[userhash]
     if !ok {
-        log.Printf("User %s does not exist in the DB!\n", userhash)
         return nil, errors.New("User does not exist in the DB!")
     }
 
@@ -47,11 +45,10 @@ func GetUserSalt(userhash string) ([]byte, error) {
 }
 
 // Removes a user salt from the storage
-func RemoveUserSalt(userhash string) {
+func RemoveUserSalt(userhash string) error {
     data, err := os.ReadFile(LOCAL_FILE_PATH)
     if err != nil {
-        log.Printf("Failed to read DB file: %s\n", err)
-        return
+        return err
     }
  
     userSaltMap := localstorage.DeserializeFileData[[]byte](data)
@@ -59,5 +56,6 @@ func RemoveUserSalt(userhash string) {
     delete(userSaltMap, userhash)
 
     localstorage.WriteMapToFile(userSaltMap, FILE_PATH)
+    return nil
 }
 
