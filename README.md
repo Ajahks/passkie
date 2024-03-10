@@ -68,5 +68,7 @@ go test ./credentialEncryption/hash
 
 You can also run all the tests in this repo via
 ```
-go test ./...
+go test -p 1 ./...
 ```
+
+Parallel testing does cause issues because race conditions occur with reading and cleaning test database files.  So the test command have been modified to run 1 at a time.
