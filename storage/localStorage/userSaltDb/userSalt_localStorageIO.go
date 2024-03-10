@@ -7,11 +7,14 @@ import (
 )
 
 const FILE_PATH = "userSaltDB.txt"
-const LOCAL_FILE_PATH = localstorage.LOCAL_DIR + "/" + FILE_PATH
+
+func getFilePath() string {
+    return localstorage.DB_PATH() + "/" + FILE_PATH
+}
 
 // Stores user salts on a local file
 func PutUserSalt(userhash string, salt []byte) {
-    data, err := os.ReadFile(LOCAL_FILE_PATH)
+    data, err := os.ReadFile(getFilePath())
     if err != nil {
         userSaltMap := make(map[string][]byte)
         userSaltMap[userhash] = salt
@@ -29,7 +32,7 @@ func PutUserSalt(userhash string, salt []byte) {
 
 // Reads salts on a local file 
 func GetUserSalt(userhash string) ([]byte, error) {
-    data, err := os.ReadFile(LOCAL_FILE_PATH)
+    data, err := os.ReadFile(getFilePath())
     if err != nil {
         return nil, err 
     }
@@ -46,7 +49,7 @@ func GetUserSalt(userhash string) ([]byte, error) {
 
 // Removes a user salt from the storage
 func RemoveUserSalt(userhash string) error {
-    data, err := os.ReadFile(LOCAL_FILE_PATH)
+    data, err := os.ReadFile(getFilePath())
     if err != nil {
         return err
     }

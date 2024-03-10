@@ -6,15 +6,39 @@ import (
 	"os"
 )
 
-const LOCAL_DIR = "localDb"
+var APPCONFIG_DIR = "passkie"
+var DATABASE_DIR = "localDb"
 
-func CleanDB() {
-    os.RemoveAll(LOCAL_DIR)
+func initDb() {
+    homeConfigDir, err := os.UserConfigDir()
+    if err != nil { homeConfigDir = "." }
+    
+    os.Mkdir(homeConfigDir + "/" + APPCONFIG_DIR, os.ModePerm)
+    os.Mkdir(homeConfigDir + "/" + APPCONFIG_DIR + "/" + DATABASE_DIR, os.ModePerm) 
+}
+
+func SetTestDb() {
+    DATABASE_DIR = "localDb-test"
+}
+
+func DB_PATH() string {
+    homeConfigDir, err := os.UserConfigDir()
+    // if the home config directory cannot be found, just return local path
+    if err != nil { return APPCONFIG_DIR + "/" + DATABASE_DIR }
+
+    return homeConfigDir + "/" + APPCONFIG_DIR + "/" + DATABASE_DIR
+}
+
+func CleanDB() error {
+    err := os.RemoveAll(DB_PATH())
+    if err != nil { return err }
+    return nil
 }
 
 func WriteMapToFile[V any](dataMap map[string]V, filename string, subdirectories ...string) error {
-    os.Mkdir(LOCAL_DIR, os.ModePerm)
-    localFilePath := LOCAL_DIR
+    initDb()
+
+    localFilePath := DB_PATH() 
     for _, subdirectory := range subdirectories {
         localFilePath = localFilePath + "/" + subdirectory
         os.Mkdir(localFilePath, os.ModePerm)

@@ -14,13 +14,13 @@ func getEncodedUsername(username string) string {
     return base64.StdEncoding.EncodeToString([]byte(username))
 }
 
-func getLocalFilePath(username string) string {
+func getFilePath(username string) string {
     // Not the most secure storing the usernames as base64 encoding, but slightly better than plaintext
-    return localstorage.LOCAL_DIR + "/" + getEncodedUsername(username) + "/" + FILE_NAME
+    return localstorage.DB_PATH() + "/" + getEncodedUsername(username) + "/" + FILE_NAME
 }
 
 func PutCredentialsForSiteHash(sitehash string, username string, encryptedCredentials []byte) {
-    data, err := os.ReadFile(getLocalFilePath(username))
+    data, err := os.ReadFile(getFilePath(username))
     if err != nil {
         siteCredentialsMap := make(map[string][]byte)
         siteCredentialsMap[sitehash] = encryptedCredentials 
@@ -36,7 +36,7 @@ func PutCredentialsForSiteHash(sitehash string, username string, encryptedCreden
 }
 
 func GetCredentialsForSiteHash(sitehash string, username string) ([]byte, error) {
-    data, err := os.ReadFile(getLocalFilePath(username))
+    data, err := os.ReadFile(getFilePath(username))
     if err != nil {
         return nil, err 
     }
@@ -51,7 +51,7 @@ func GetCredentialsForSiteHash(sitehash string, username string) ([]byte, error)
 }
 
 func RemoveCredentialsForSiteHash(sitehash string, username string) error {
-    data, err := os.ReadFile(getLocalFilePath(username))
+    data, err := os.ReadFile(getFilePath(username))
     if err != nil {
         return err
     }

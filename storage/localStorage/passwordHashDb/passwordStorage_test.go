@@ -8,19 +8,21 @@ import (
 )
 
 func TestPutPasswordHashCreatesANewFileIfNonExistent(t *testing.T) {
+    localstorage.SetTestDb()
     username := "testUsername"
     passwordHash := []byte("testPasswordHash")
 
     PutPasswordHash(username, passwordHash)
 
-    _, err := os.ReadFile(LOCAL_FILE_PATH)
+    _, err := os.ReadFile(getFilePath())
     if err != nil {
-        t.Fatalf("PutPasswordHash did not create a new file: %s", LOCAL_FILE_PATH)        
+        t.Fatalf("PutPasswordHash did not create a new file: %s", getFilePath())        
     }
     localstorage.CleanDB()
 }
 
 func TestPutPasswordHashAndGetPasswordHashRetrievesTheOriginalPasswordHash(t *testing.T) {
+    localstorage.SetTestDb()
     username := "testUsername"
     passwordHash := []byte("testPasswordHash")
 
@@ -37,6 +39,7 @@ func TestPutPasswordHashAndGetPasswordHashRetrievesTheOriginalPasswordHash(t *te
 }
 
 func TestPutPasswordHashWithMultipleUsersMaintainsCorrectMapping(t *testing.T) {
+    localstorage.SetTestDb()
     username1 := "testUsername1"
     passwordHash1 := []byte("testPasswordHash1")
     username2 := "testUsername2"
@@ -63,6 +66,7 @@ func TestPutPasswordHashWithMultipleUsersMaintainsCorrectMapping(t *testing.T) {
 }
 
 func TestPutUserWithADifferentPasswordHashOverridesTheOldPasswordHash(t *testing.T) {
+    localstorage.SetTestDb()
     username := "testUsername"
     passwordHash1 := []byte("testPasswordHash1")
     passwordHash2 := []byte("testPasswordHash2")
@@ -82,6 +86,7 @@ func TestPutUserWithADifferentPasswordHashOverridesTheOldPasswordHash(t *testing
 }
 
 func TestRemovePasswordHashRemovesTheUserPasswordHashFromTheMap(t *testing.T) {
+    localstorage.SetTestDb()
     username := "testUsername"
     passwordHash := []byte("testPasswordHash")
 

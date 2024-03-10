@@ -2,11 +2,14 @@ package salt
 
 import (
 	"bytes"
-	"os"
 	"testing"
+
+	localstorage "github.com/Ajahks/passkie/storage/localStorage"
 )
 
 func TestGetSaltForUserHashGeneratesReturnsASalt(t *testing.T) {
+    localstorage.SetTestDb()
+    defer localstorage.CleanDB()
     testUserHash := []byte("testUserHash")
     expectedSaltLen := 32
 
@@ -18,11 +21,11 @@ func TestGetSaltForUserHashGeneratesReturnsASalt(t *testing.T) {
     if bytes.Equal(salt, make([]byte, expectedSaltLen)) {
         t.Fatalf("Generated salt is just an empty byte buffer")
     }
-
-    cleanDb()
 }
 
 func TestPutSaltForUserThenGetSaltForUserRetrievesPutSalt(t *testing.T) {
+    localstorage.SetTestDb()
+    defer localstorage.CleanDB()
     testUserHash := []byte("testUserHash")
     testSalt := []byte("testSalt")
 
@@ -32,11 +35,11 @@ func TestPutSaltForUserThenGetSaltForUserRetrievesPutSalt(t *testing.T) {
     if !bytes.Equal(testSalt, retrievedSalt) {
         t.Fatalf("Got salt that is different from put salt: Retrieved Salt: %s, Expected: %s", string(retrievedSalt), string(testSalt))
     }
-
-    cleanDb()
 }
 
 func TestGetSaltForUserHashTwiceReturnsTheSameSaltGeneratedTheFirstTime(t *testing.T) {
+    localstorage.SetTestDb()
+    defer localstorage.CleanDB()
     testUserHash := []byte("testUserHash")
 
     salt1 := GetSaltForUserHash(testUserHash)
@@ -45,11 +48,11 @@ func TestGetSaltForUserHashTwiceReturnsTheSameSaltGeneratedTheFirstTime(t *testi
     if !bytes.Equal(salt1, salt2) {
         t.Fatalf("GetSaltForUserHash does not return the same salt when called twice! Salt 1: %s, Salt2: %s", salt1, salt2)
     }
-
-    cleanDb()
 }
 
 func TestGetSaltForUserGeneratesNewHashAfterDelete(t *testing.T) {
+    localstorage.SetTestDb()
+    defer localstorage.CleanDB()
     testUserHash := []byte("testUserHash")
 
     salt1 := GetSaltForUserHash(testUserHash)
@@ -59,10 +62,4 @@ func TestGetSaltForUserGeneratesNewHashAfterDelete(t *testing.T) {
     if bytes.Equal(salt1, salt2) {
         t.Fatalf("GetSaltForUserHash does not generate a new hash after delete! Salt 1: %s, Salt2: %s", salt1, salt2)
     }
-
-    cleanDb()
-}
-
-func cleanDb() {
-    os.RemoveAll("localDb")
 }

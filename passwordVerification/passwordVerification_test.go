@@ -7,6 +7,7 @@ import (
 )
 
 func TestSetPasswordForNewUserTwiceFails(t *testing.T) {
+    localstorage.SetTestDb()
     username := "testUsername"
     masterPassword := "testPassword"
 
@@ -23,6 +24,7 @@ func TestSetPasswordForNewUserTwiceFails(t *testing.T) {
 }
 
 func TestSetPasswordForNewUserThenVerifyPasswordWithCorrectPasswordReturnsTrue(t *testing.T) {
+    localstorage.SetTestDb()
     username := "testUsername"
     masterPassword := "testPassword"
 
@@ -40,6 +42,7 @@ func TestSetPasswordForNewUserThenVerifyPasswordWithCorrectPasswordReturnsTrue(t
 }
 
 func TestSetPasswordForNewUserThenVerifyPasswordWithWrongPasswordReturnsFalse(t *testing.T) {
+    localstorage.SetTestDb()
     username := "testUsername"
     masterPassword := "testPassword"
 
@@ -57,6 +60,7 @@ func TestSetPasswordForNewUserThenVerifyPasswordWithWrongPasswordReturnsFalse(t 
 }
 
 func TestUpdatePasswordForUserThenVerifyNewPasswordSucceeds(t *testing.T) {
+    localstorage.SetTestDb()
     username := "testUsername"
     firstPassword := "testPassword"
     secondPassword := "testPassword2"
@@ -75,6 +79,7 @@ func TestUpdatePasswordForUserThenVerifyNewPasswordSucceeds(t *testing.T) {
 }
 
 func TestUpdatePasswordForUserThenVerifyOldPasswordFails(t *testing.T) {
+    localstorage.SetTestDb()
     username := "testUsername"
     firstPassword := "testPassword"
     secondPassword := "testPassword2"
@@ -93,6 +98,7 @@ func TestUpdatePasswordForUserThenVerifyOldPasswordFails(t *testing.T) {
 }
 
 func TestUpdatePasswordForUserWithNewUserThrowsError(t *testing.T) {
+    localstorage.SetTestDb()
     username := "testUsername"
     firstPassword := "testPassword"
     secondPassword := "testPassword2"
@@ -106,6 +112,7 @@ func TestUpdatePasswordForUserWithNewUserThrowsError(t *testing.T) {
 }
 
 func TestUpdatePasswordForUserWithWrongCurrentPasswordFails(t *testing.T) {
+    localstorage.SetTestDb()
     username := "testUsername"
     firstPassword := "testPassword"
     secondPassword := "testPassword2"

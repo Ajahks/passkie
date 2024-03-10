@@ -8,19 +8,21 @@ import (
 )
 
 func TestAddActiveUserCreatesANewDbFileIfNonExistent(t *testing.T) {
+    localstorage.SetTestDb()
+    defer localstorage.CleanDB()
     userhash := "userhash"
 
     AddActiveUser(userhash)
 
-    _, err := os.ReadFile(LOCAL_FILE_PATH)
+    _, err := os.ReadFile(getFilePath())
     if err != nil {
-        t.Fatalf("AddActiveUser did not create a new file: %s", LOCAL_FILE_PATH)        
+        t.Fatalf("AddActiveUser did not create a new file: %s", getFilePath())        
     }
-
-    localstorage.CleanDB()
 }
 
 func TestAddActiveUserAndIsUserActiveReturnsTrueForNewlyActiveUser(t *testing.T) {
+    localstorage.SetTestDb()
+    defer localstorage.CleanDB()
     userhash := "userhash"
     
     AddActiveUser(userhash)
@@ -29,11 +31,11 @@ func TestAddActiveUserAndIsUserActiveReturnsTrueForNewlyActiveUser(t *testing.T)
     if result == false {
         t.Fatal("Test user hash is not active in the DB")
     }
-
-    localstorage.CleanDB()
 }
 
 func TestIsUserActiveReturnsFalseForUserThatWasNeverAdded(t *testing.T) {
+    localstorage.SetTestDb()
+    defer localstorage.CleanDB()
     userhash := "userhash"
 
     result := IsUserHashActive(userhash)
@@ -41,11 +43,11 @@ func TestIsUserActiveReturnsFalseForUserThatWasNeverAdded(t *testing.T) {
     if result == true {
         t.Fatal("Test userhash should not be active in the DB")
     }
-
-    localstorage.CleanDB()
 }
 
 func TestAddActiveUserForMultipleUserShowsThatBothUsersAreActive(t *testing.T) {
+    localstorage.SetTestDb()
+    defer localstorage.CleanDB()
     userhash1 := "userhash1"
     userhash2 := "userhash2"
 
@@ -60,17 +62,19 @@ func TestAddActiveUserForMultipleUserShowsThatBothUsersAreActive(t *testing.T) {
     if result2 == false {
         t.Fatal("userhash2 was not active in the DB")
     }
-
-    localstorage.CleanDB()
 }
 
 func TestRemoveActiveUserForNonExistentUserDoesNotFail(t *testing.T) {
+    localstorage.SetTestDb()
+    defer localstorage.CleanDB()
     RemoveActiveUser("testuserhash")
 
     localstorage.CleanDB()
 }
 
 func TestAddActiveUserAndRemoveActiveUserRemovesUser(t *testing.T) {
+    localstorage.SetTestDb()
+    defer localstorage.CleanDB()
     userhash := "userhash"
 
     AddActiveUser(userhash)
@@ -80,11 +84,11 @@ func TestAddActiveUserAndRemoveActiveUserRemovesUser(t *testing.T) {
     if result == true {
         t.Fatal("Removed user is still active in the DB")
     }
-
-    localstorage.CleanDB()
 }
 
 func TestAddActiveUsersAndRemoveOneUserDoesNotRemoveTheOther(t *testing.T) {
+    localstorage.SetTestDb()
+    defer localstorage.CleanDB()
     userhash1 := "userhash1"
     userhash2 := "userhash2"
 
@@ -100,7 +104,5 @@ func TestAddActiveUsersAndRemoveOneUserDoesNotRemoveTheOther(t *testing.T) {
     if result2 == false {
         t.Fatal("Non removed user is no longer active in DB")
     }
-
-    localstorage.CleanDB()
 }
 

@@ -8,6 +8,7 @@ import (
 )
 
 func TestCreateNewUserDoesntThrowErrForNewUser(t *testing.T) {
+    localstorage.SetTestDb()
     defer localstorage.CleanDB()
     username := "testUser"
     password := "testPassword"
@@ -20,6 +21,7 @@ func TestCreateNewUserDoesntThrowErrForNewUser(t *testing.T) {
 }
 
 func TestCreateNewUserForExistingUserThrowsException(t *testing.T) {
+    localstorage.SetTestDb()
     defer localstorage.CleanDB()
     username := "testUser"
     password := "testPassword"
@@ -33,6 +35,7 @@ func TestCreateNewUserForExistingUserThrowsException(t *testing.T) {
 }
 
 func TestStoreCredentialsForSiteForInvalidUserReturnsError(t *testing.T) {
+    localstorage.SetTestDb()
     defer localstorage.CleanDB()
     username := "testUser"
     password := "testPassword"
@@ -48,6 +51,7 @@ func TestStoreCredentialsForSiteForInvalidUserReturnsError(t *testing.T) {
 }
 
 func TestStoreCredentialsForSiteForInvalidPasswordReturnsError(t *testing.T) {
+    localstorage.SetTestDb()
     defer localstorage.CleanDB()
     username := "testUser"
     password := "testPassword"
@@ -64,6 +68,7 @@ func TestStoreCredentialsForSiteForInvalidPasswordReturnsError(t *testing.T) {
 }
 
 func TestRetrieveCredentialsForSiteForInvalidUserReturnsError(t *testing.T) {
+    localstorage.SetTestDb()
     defer localstorage.CleanDB()
     username := "testUser"
     password := "testPassword"
@@ -82,6 +87,7 @@ func TestRetrieveCredentialsForSiteForInvalidUserReturnsError(t *testing.T) {
 }
 
 func TestRetrieveCredentialsForSiteForInvalidPasswordReturnsError(t *testing.T) {
+    localstorage.SetTestDb()
     defer localstorage.CleanDB()
     username := "testUser"
     password := "testPassword"
@@ -101,6 +107,7 @@ func TestRetrieveCredentialsForSiteForInvalidPasswordReturnsError(t *testing.T) 
 }
 
 func TestRetrieveCrednetialsForSiteForUnknownSiteReturnsError(t *testing.T) {
+    localstorage.SetTestDb()
     defer localstorage.CleanDB()
     username := "testUser"
     password := "testPassword"
@@ -120,6 +127,7 @@ func TestRetrieveCrednetialsForSiteForUnknownSiteReturnsError(t *testing.T) {
 }
 
 func TestStoreCredentialsForSiteThenRetrieveCredentialsForSiteGetsOriginalCredentials(t *testing.T) {
+    localstorage.SetTestDb()
     defer localstorage.CleanDB()
     username := "testUser"
     password := "testPassword"
@@ -141,6 +149,7 @@ func TestStoreCredentialsForSiteThenRetrieveCredentialsForSiteGetsOriginalCreden
 }
 
 func TestStoreCredentialsForSameSiteTwiceVerifyRetrieveCredentialsGetsLastStored(t *testing.T) {
+    localstorage.SetTestDb()
     defer localstorage.CleanDB()
     username := "testUser"
     password := "testPassword"

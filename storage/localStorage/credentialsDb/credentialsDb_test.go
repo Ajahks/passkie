@@ -9,6 +9,7 @@ import (
 )
 
 func TestPutCredentialsForSiteHashCreatesCorrectFileInCorrectPath(t *testing.T) {
+    localstorage.SetTestDb()
     defer localstorage.CleanDB()
     sitehash := "testSiteHash"
     username := "testUsername"
@@ -17,13 +18,14 @@ func TestPutCredentialsForSiteHashCreatesCorrectFileInCorrectPath(t *testing.T) 
     PutCredentialsForSiteHash(sitehash, username, credentials)
 
 
-    _, err := os.ReadFile(getLocalFilePath(username))
+    _, err := os.ReadFile(getFilePath(username))
     if err != nil {
-        t.Errorf("Failed to find the credential DB file in localPath: %s", getLocalFilePath(username))
+        t.Errorf("Failed to find the credential DB file in localPath: %s", getFilePath(username))
     }
 }
 
 func TestPutCredentialsForSiteHashAndGetCredentialsForSiteHashGetTheCorrectCredentials(t *testing.T) {
+    localstorage.SetTestDb()
     defer localstorage.CleanDB()
     sitehash := "testSiteHash"
     username := "testUsername"
@@ -41,6 +43,7 @@ func TestPutCredentialsForSiteHashAndGetCredentialsForSiteHashGetTheCorrectCrede
 }
 
 func TestGetCredentialsForNonExistentUserReturnsError(t *testing.T) {
+    localstorage.SetTestDb()
     defer localstorage.CleanDB()
     sitehash := "testSiteHash"
     username := "testUsername"
@@ -56,6 +59,7 @@ func TestGetCredentialsForNonExistentUserReturnsError(t *testing.T) {
 }
 
 func TestPutCredentialsForSiteHashTwiceReturnsMostRecentUpdateWhenGet(t *testing.T) {
+    localstorage.SetTestDb()
     defer localstorage.CleanDB()
     sitehash := "testSiteHash"
     username := "testUsername"
@@ -75,6 +79,7 @@ func TestPutCredentialsForSiteHashTwiceReturnsMostRecentUpdateWhenGet(t *testing
 }
 
 func TestPutCredentialsForSiteHashWithDifferentUsersMaintainTheMappings(t *testing.T) {
+    localstorage.SetTestDb()
     defer localstorage.CleanDB()
     sitehash := "testSiteHash"
     username1 := "testUsername1"
@@ -102,6 +107,7 @@ func TestPutCredentialsForSiteHashWithDifferentUsersMaintainTheMappings(t *testi
 }
 
 func TestRemoveCredentialsForSiteHash(t *testing.T) {
+    localstorage.SetTestDb()
     defer localstorage.CleanDB()
     sitehash := "testSiteHash"
     username := "testUsername"
@@ -120,18 +126,19 @@ func TestRemoveCredentialsForSiteHash(t *testing.T) {
 }
 
 func TestRemoveCredentialsForSiteHashForNonExistentSiteHashDoesNotModifyResult(t *testing.T) {
+    localstorage.SetTestDb()
     defer localstorage.CleanDB()
     sitehash := "testSiteHash"
     username := "testUsername"
     credentials := []byte("test")
 
     PutCredentialsForSiteHash(sitehash, username, credentials)
-    data1, err := os.ReadFile(getLocalFilePath(username))
+    data1, err := os.ReadFile(getFilePath(username))
     if err != nil {
         t.Fatalf("Failed to read DB file: %s\n", err)
     }
     RemoveCredentialsForSiteHash("otherSite", username)
-    data2, err := os.ReadFile(getLocalFilePath(username))
+    data2, err := os.ReadFile(getFilePath(username))
     if err != nil {
         t.Fatalf("Failed to read DB file: %s\n", err)
     }

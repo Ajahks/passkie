@@ -6,12 +6,13 @@ import (
 )
 
 func TestCreateTheFolderAndCleanDbRemovesTheFolder(t *testing.T) {
-    os.Mkdir(LOCAL_DIR, os.ModePerm)
-    localFilePath := LOCAL_DIR + "/RandomFile" 
+    SetTestDb()
+    initDb()
+    localFilePath := DB_PATH() + "/RandomFile" 
     os.Create(localFilePath)
     _, err := os.ReadFile(localFilePath)
     if err != nil {
-        t.Errorf("Failed to create a file, this test is not going to work properly!")    
+        t.Errorf("Failed to create a file, this test is not going to work properly! %v", err)    
     }
 
     CleanDB()
@@ -23,65 +24,67 @@ func TestCreateTheFolderAndCleanDbRemovesTheFolder(t *testing.T) {
 }
 
 func TestWriteMapToFileCreatesAFile(t *testing.T) {
+    SetTestDb()
+    defer CleanDB()
     testMap := map[string]string{"test":"value"} 
     filename := "testFile.txt"
-    localFilePath := LOCAL_DIR + "/" + filename 
+    localFilePath := DB_PATH() + "/" + filename 
 
     WriteMapToFile[string](testMap, filename)
 
     _, err := os.ReadFile(localFilePath)
     if err != nil {
-        t.Errorf("WriteMapToFile failed to generate file: %s", localFilePath)
+        t.Errorf("WriteMapToFile failed to generate file: %s, error: %v", localFilePath, err)
  
     }
-
-    CleanDB()
 }
 
 func TestWriteToFileWithOneSubdirectoryCreatesNestedFile(t *testing.T) {
+    SetTestDb()
+    defer CleanDB()
     testMap := map[string]string{"test":"value"} 
     filename := "testFile.txt"
     subdirectory := "test"
-    localFilePath := LOCAL_DIR + "/" + subdirectory + "/" + filename 
+    localFilePath := DB_PATH() + "/" + subdirectory + "/" + filename 
 
     WriteMapToFile[string](testMap, filename, subdirectory)
 
     _, err := os.ReadFile(localFilePath)
     if err != nil {
-        t.Errorf("WriteMapToFile failed to generate file in correct path: %s", localFilePath)
+        t.Errorf("WriteMapToFile failed to generate file in correct path: %s, error: %v", localFilePath, err)
  
     }
-
-    CleanDB()
 }
 
 func TestWriteToFileWithMultipleSubdirectoriesCreatesNestedFile(t *testing.T) {
+    SetTestDb()
+    defer CleanDB()
     testMap := map[string]string{"test":"value"} 
     filename := "testFile.txt"
     subdirectory1 := "test"
     subdirectory2 := "test2"
-    localFilePath := LOCAL_DIR + "/" + subdirectory1 + "/" + subdirectory2 + "/" + filename 
+    localFilePath := DB_PATH() + "/" + subdirectory1 + "/" + subdirectory2 + "/" + filename 
 
     WriteMapToFile[string](testMap, filename, subdirectory1, subdirectory2)
 
     _, err := os.ReadFile(localFilePath)
     if err != nil {
-        t.Errorf("WriteMapToFile failed to generate file in correct path: %s", localFilePath)
+        t.Errorf("WriteMapToFile failed to generate file in correct path: %s, error %v", localFilePath, err)
  
     }
-
-    CleanDB()
 }
 
 func TestWriteMapToFileAndDeserializeFileDataOfFileGetsOriginalData(t *testing.T) {
+    SetTestDb()
+    defer CleanDB()
     testMap := map[string]string{"test":"value"} 
     filename := "testFile.txt"
-    localFilePath := LOCAL_DIR + "/" + filename 
+    localFilePath := DB_PATH() + "/" + filename 
 
     WriteMapToFile[string](testMap, filename)
     data, err := os.ReadFile(localFilePath)
     if err != nil {
-        t.Errorf("WriteMapToFile failed to generate file: %s", localFilePath)
+        t.Errorf("WriteMapToFile failed to generate file: %s: %v", localFilePath, err)
     }
     deserializedMap := DeserializeFileData[string](data)
 
@@ -95,7 +98,5 @@ func TestWriteMapToFileAndDeserializeFileDataOfFileGetsOriginalData(t *testing.T
     if resultValue != "value" {
         t.Errorf("Deserialized map value is not expected: Exptected: 'value', Got: '%s'", resultValue)
     }
-
-    CleanDB()
 }
 

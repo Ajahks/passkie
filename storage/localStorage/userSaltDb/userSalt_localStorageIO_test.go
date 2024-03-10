@@ -8,19 +8,21 @@ import (
 )
 
 func TestPutUserSaltCreatesANewFileIfNonExistent(t *testing.T) {
+    localstorage.SetTestDb()
     username := "testUsername"
     salt := []byte("testUserSalt")
 
     PutUserSalt(username, salt)
 
-    _, err := os.ReadFile(LOCAL_FILE_PATH)
+    _, err := os.ReadFile(getFilePath())
     if err != nil {
-        t.Fatalf("PutUserSalt did not create a new file: %s", LOCAL_FILE_PATH)        
+        t.Fatalf("PutUserSalt did not create a new file: %s", getFilePath())        
     }
     localstorage.CleanDB()
 }
 
 func TestPutUserSaltAndGetUserSaltRetrievesTheOriginalSalt(t *testing.T) {
+    localstorage.SetTestDb()
     username := "testUsername"
     salt := []byte("testUserSalt")
 
@@ -37,6 +39,7 @@ func TestPutUserSaltAndGetUserSaltRetrievesTheOriginalSalt(t *testing.T) {
 }
 
 func TestPutUserSaltWithMultipleUsersMaintainsCorrectMapping(t *testing.T) {
+    localstorage.SetTestDb()
     username1 := "testUsername1"
     salt1 := []byte("testUserSalt1")
     username2 := "testUsername2"
@@ -63,6 +66,7 @@ func TestPutUserSaltWithMultipleUsersMaintainsCorrectMapping(t *testing.T) {
 }
 
 func TestPutUserWithADifferentSaltOverridesTheOldSalt(t *testing.T) {
+    localstorage.SetTestDb()
     username := "testUsername"
     salt1 := []byte("testUserSalt1")
     salt2 := []byte("testUserSalt2")
@@ -82,6 +86,7 @@ func TestPutUserWithADifferentSaltOverridesTheOldSalt(t *testing.T) {
 }
 
 func TestRemoveUserSaltRemovesTheUserSaltFromTheMap(t *testing.T) {
+    localstorage.SetTestDb()
     username := "testUsername"
     salt := []byte("testUserSalt")
 

@@ -7,10 +7,13 @@ import (
 )
 
 const FILE_NAME = "passwordDB.txt"
-const LOCAL_FILE_PATH = localstorage.LOCAL_DIR + "/" + FILE_NAME
+
+func getFilePath() string {
+    return localstorage.DB_PATH() + "/" + FILE_NAME
+}
 
 func PutPasswordHash(userhash string, passwordHash []byte) {
-    data, err := os.ReadFile(LOCAL_FILE_PATH)
+    data, err := os.ReadFile(getFilePath())
     if err != nil {
         userPasswordMap := make(map[string][]byte)
         userPasswordMap[userhash] = passwordHash 
@@ -26,7 +29,7 @@ func PutPasswordHash(userhash string, passwordHash []byte) {
 }
 
 func GetPasswordHash(userhash string) ([]byte, error) {
-    data, err := os.ReadFile(LOCAL_FILE_PATH)
+    data, err := os.ReadFile(getFilePath())
     if err != nil {
         return nil, err 
     }
@@ -41,7 +44,7 @@ func GetPasswordHash(userhash string) ([]byte, error) {
 }
 
 func RemovePasswordHash(userhash string) error {
-    data, err := os.ReadFile(LOCAL_FILE_PATH)
+    data, err := os.ReadFile(getFilePath())
     if err != nil {
         return err 
     }
