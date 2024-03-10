@@ -126,3 +126,48 @@ func TestUpdatePasswordForUserWithWrongCurrentPasswordFails(t *testing.T) {
     localstorage.CleanDB()
 }
 
+func TestRemoveUserStopsPasswordVerificationFromWorkingEvenWithCorrectPassword(t *testing.T) {
+    localstorage.SetTestDb()
+    defer localstorage.CleanDB()
+    username := "testUsername"
+    password := "testPassword"
+    SetPasswordForNewUser(username, password)
+    
+    err := RemoveUser(username, password)
+    if err != nil {
+        t.Fatalf("Failed to DeactivateUser: %v", err)
+    }
+    ok := VerifyPasswordForUser(username, password)
+    
+    if ok {
+        t.Errorf("VerifyPasswordForUser still succeeds after deactivation!")
+    }
+}
+
+func TestRemoveUserAllowsSetPasswordForNewUserAgain(t *testing.T) {
+    localstorage.SetTestDb()
+    defer localstorage.CleanDB()
+    
+    username := "testUsername"
+    password1 := "testPassword1"
+    password2 := "testPassword2"
+    SetPasswordForNewUser(username, password1)
+
+    err := RemoveUser(username, password1)
+    if err != nil {
+        t.Fatalf("Failed to RemoveUser: %v", err)
+    }
+    err = SetPasswordForNewUser(username, password2)
+    if err != nil {
+        t.Fatalf("Failed to recreate new user after removal: %v", err)
+    }
+
+    ok := VerifyPasswordForUser(username, password2)
+    if !ok {
+        t.Fatalf("New password is returning false for VerifyPassword")
+    }
+    ok = VerifyPasswordForUser(username, password1)
+    if ok {
+        t.Fatalf("Old password should not be working after RemoveUser")
+    }
+}

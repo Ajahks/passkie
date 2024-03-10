@@ -28,6 +28,11 @@ func SetPasswordForNewUser(username string, masterPassword string) error {
 }
 
 func VerifyPasswordForUser(username string, masterPassword string) bool {
+    unsaltedUserHash := hash.HashUsername(username, "")
+    if !activeuserdb.IsUserHashActive(string(unsaltedUserHash)) {
+        return false
+    }
+
     hashedUser := hash.HashUsername(username, masterPassword)
 
     userHashSalt := salt.GetSaltForUserHash(hashedUser)
@@ -65,6 +70,17 @@ func UpdatePasswordForUser(username string, currentPassword string, newPassword 
     salt.RemoveSaltForUserHash(oldUserHash)
     passwordHashDb.RemovePasswordHash(string(oldUserHash))
 
+    return nil
+}
+
+func RemoveUser(username string, masterPassword string) error {
+    unsaltedUserHash := hash.HashUsername(username, "")
+    err := activeuserdb.RemoveActiveUser(string(unsaltedUserHash))
+    if err != nil { return err }
+    
+    saltedUserHash := hash.HashUsername(username, masterPassword)
+    salt.RemoveSaltForUserHash(saltedUserHash)
+    passwordHashDb.RemovePasswordHash(string(saltedUserHash))
     return nil
 }
 
