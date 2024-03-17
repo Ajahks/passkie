@@ -174,3 +174,73 @@ func TestStoreCredentialsForSameSiteTwiceVerifyRetrieveCredentialsGetsLastStored
     }
 }
 
+func TestRemoveCredentialsForSiteWithInvalidMasterPasswordDoesNotRemoveSite(t *testing.T) {
+    localstorage.SetTestDb()
+    defer localstorage.CleanDB()
+
+    username := "testUser"
+    password := "testPassword"
+    site := "testUrl.com"
+    credentials := make(map[string]string)
+    credentials["testField1"] = "test"
+    credentials["testField2"] = "yeet"
+    CreateNewUser(username, password)
+    StoreCredentialsForSite(site, username, password, credentials)
+
+    err := RemoveCredentialsForSite(site, username, "wrongPassword") 
+
+    if err == nil {
+        t.Fatalf("RemoveCredentialsForSite should have returned exception with wrong password!")
+    }
+    retrievedCredentials, err := RetrieveCredentialsForSite(site, username, password)
+    if err != nil {
+        t.Errorf("Error returned for retrieve credentials: %v, Expected credentials should not be touched after failed removal", err)
+    }
+    if retrievedCredentials == nil {
+        t.Error("Credentials missing after supposedly failed RemoveCredentialsForSite!")
+    }
+}
+
+func TestRemoveCredentialsFromSiteRemovesCredentialsProperly(t *testing.T) {
+    localstorage.SetTestDb()
+    defer localstorage.CleanDB()
+
+    username := "testUser"
+    password := "testPassword"
+    site := "testUrl.com"
+    credentials := make(map[string]string)
+    credentials["testField1"] = "test"
+    credentials["testField2"] = "yeet"
+    CreateNewUser(username, password)
+    StoreCredentialsForSite(site, username, password, credentials)
+
+    err := RemoveCredentialsForSite(site, username, password)
+    if err != nil {
+        t.Fatalf("Failed to remove credentials for site: %v", err)
+    }
+
+    retrievedCredentials, err := RetrieveCredentialsForSite(site, username, password)
+    if err == nil {
+        t.Error("Retrieved credential after valid remove should have returned an error!")
+    }
+    if retrievedCredentials != nil {
+        t.Errorf("Retrieved credentials were still returned after valid removal call: %v", retrievedCredentials) 
+    }
+}
+
+func TestRemoveCredentialsFromSiteOnNonExistentSiteThrowsError(t *testing.T) {
+    localstorage.SetTestDb()
+    defer localstorage.CleanDB()
+
+    username := "testUser"
+    password := "testPassword"
+    site := "testUrl.com"
+    CreateNewUser(username, password)
+
+    err := RemoveCredentialsForSite(site, username, password)
+
+    if err == nil {
+        t.Fatal("RemoveCredentialsForSite should have returned an error for a non existent site!")
+    }
+}
+

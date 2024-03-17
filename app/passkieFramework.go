@@ -30,7 +30,7 @@ func StoreCredentialsForSite(
 func RetrieveCredentialsForSite(siteBaseUrl string, username string, masterPassword string) (map[string]string, error) {
     ok := passwordverification.VerifyPasswordForUser(username, masterPassword)
     if !ok {
-        return nil, errors.New("InvalidMasterPassword: Cannot store credentials because masterPassword for user is incorrect!")
+        return nil, errors.New("InvalidMasterPassword: Cannot retrieve credentials because masterPassword for user is incorrect!")
     }
 
     hashedSite := hash.HashUrl(siteBaseUrl, masterPassword)
@@ -48,6 +48,19 @@ func CreateNewUser(username string, masterPassword string) error {
     if err != nil {
         return err 
     }
+
+    return nil
+}
+
+func RemoveCredentialsForSite(siteBaseUrl string, username string, masterPassword string) error {
+    ok := passwordverification.VerifyPasswordForUser(username, masterPassword) 
+    if !ok {
+        return errors.New("InvalidMasterpassword: Cannot remove credentials because masterPassword is incorrect!")
+    }
+
+    hashedSite := hash.HashUrl(siteBaseUrl, masterPassword)
+    err := credentialsDb.RemoveCredentialsForSiteHash(string(hashedSite), username)
+    if err != nil { return err }
 
     return nil
 }
