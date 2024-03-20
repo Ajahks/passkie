@@ -65,3 +65,18 @@ func RemoveCredentialsForSite(siteBaseUrl string, username string, masterPasswor
     return nil
 }
 
+func RemoveUser(username string, masterPassword string) error {
+    ok := passwordverification.VerifyPasswordForUser(username, masterPassword)
+    if !ok {
+        return errors.New("InvalidMasterpassword: Cannot remove credentials because masterPassword is incorrect!")
+    }
+
+    err := passwordverification.RemoveUser(username, masterPassword)
+    if err != nil { return nil } 
+    
+    err = credentialsDb.RemoveUserCredentials(username)
+    if err != nil { return nil }
+
+    return nil
+}
+

@@ -244,3 +244,122 @@ func TestRemoveCredentialsFromSiteOnNonExistentSiteThrowsError(t *testing.T) {
     }
 }
 
+func TestRemoveUserOnNonExistentUserThrowsError(t *testing.T) {
+    localstorage.SetTestDb()
+    defer localstorage.CleanDB()
+
+    err := RemoveUser("fakeUsername", "fakePassword")
+    
+    if err == nil {
+        t.Fatal("RemoveUser should have returned an error for a non existent user!")
+    }
+}
+
+func TestRemoveUserWithWrongPasswordThrowsErrorAndKeepsUser(t *testing.T) {
+    localstorage.SetTestDb()
+    defer localstorage.CleanDB()
+
+    username := "testUser"
+    password := "testPassword"
+    CreateNewUser(username, password)
+
+    err := RemoveUser(username, "wrongPassword") 
+
+    if err == nil {
+        t.Error("RemoveUser with the wrong password should have thrown an error") 
+    }
+    err = CreateNewUser(username, "wrongPassword")
+    if err == nil {
+        t.Error("CreateNewUser should not work for a user that was not deleted")
+    }
+}
+
+func TestRemoveUserOnExistingUserAllowsNewUserCreation(t *testing.T) {
+    localstorage.SetTestDb()
+    defer localstorage.CleanDB()
+
+    username := "testUser"
+    password := "testPassword"
+    CreateNewUser(username, password)
+
+    err := RemoveUser(username, password) 
+
+    if err != nil {
+        t.Errorf("Failed to RemoveUser: %v", err)
+    }
+    err = CreateNewUser(username, password)
+    if err != nil {
+        t.Errorf("Failed to create new user after user was deleted: %v", err)
+    }
+}
+
+func TestRemoveUserOnExistingUserDoesNotSaveOldMasterPassword(t *testing.T) {
+    localstorage.SetTestDb()
+    defer localstorage.CleanDB()
+
+    username := "testUser"
+    originalPassword := "testPassword"
+    newPassword := "testPassword2"
+    CreateNewUser(username, originalPassword)
+    site := "testUrl.com"
+    credentials := make(map[string]string)
+    credentials["testField1"] = "test"
+    credentials["testField2"] = "yeet"
+
+    RemoveUser(username, originalPassword)
+    CreateNewUser(username, newPassword)
+    err := StoreCredentialsForSite(site, username, originalPassword, credentials)
+
+    if err == nil {
+        t.Fatal("StoreCredentials with the old credentials of a previously deleted user should not work!")
+    }
+}
+
+func TestRemoveUserOnExistingUserDoesNotSaveOldCredentials(t *testing.T) {
+    localstorage.SetTestDb()
+    defer localstorage.CleanDB()
+
+    username := "testUser"
+    password := "testPassword"
+    CreateNewUser(username, password)
+    site := "testUrl.com"
+    credentials := make(map[string]string)
+    credentials["testField1"] = "test"
+    credentials["testField2"] = "yeet"
+    StoreCredentialsForSite(site, username, password, credentials)
+
+
+    RemoveUser(username, password)
+    CreateNewUser(username, password)
+    res, err := RetrieveCredentialsForSite(site, username, password)
+    if err == nil {
+        t.Error("Retrieve credentials for previously removed user should not exist")
+    }
+    if res != nil {
+        t.Errorf("Retrieve credentials for previously removed user should not have returned a result. Result: %v", res) 
+    }
+}
+
+func TestRemoveUserOnExistingUserDoesNotAffectOtherUsers(t *testing.T) {
+    localstorage.SetTestDb()
+    defer localstorage.CleanDB()
+
+    username1 := "testUser1"
+    password1 := "testPassword1"
+    username2 := "testUser2"
+    password2 := "testPassword2"
+    CreateNewUser(username1, password1)
+    CreateNewUser(username2, password2)
+
+    RemoveUser(username2, password2) 
+
+    err := CreateNewUser(username1, password1)
+    if err == nil {
+        t.Errorf("Should not be able to recreate username1 when only username2 was deleted")
+    }
+    err = CreateNewUser(username2, password2)
+    if err != nil {
+        t.Errorf("Should have been able to recreate username 2 after it was deleted. Error: %v", err)
+    }
+}
+
