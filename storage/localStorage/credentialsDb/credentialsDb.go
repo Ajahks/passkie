@@ -63,3 +63,12 @@ func RemoveCredentialsForSiteHash(sitehash string, username string) error {
     return nil
 }
 
+func RemoveUserCredentials(username string) error {
+    err := os.Remove(getFilePath(username))
+    if err != nil { return err }
+
+    err = os.Remove(localstorage.DB_PATH() + "/" + getEncodedUsername(username))
+    if err != nil { return err } 
+    return nil
+}
+

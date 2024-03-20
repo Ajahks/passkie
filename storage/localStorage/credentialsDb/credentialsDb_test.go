@@ -148,3 +148,81 @@ func TestRemoveCredentialsForSiteHashForNonExistentSiteHashDoesNotModifyResult(t
     }
 }
 
+func TestRemoveUserCredentialsForNonExistentUserReturnsError(t *testing.T) {
+    localstorage.SetTestDb()
+    defer localstorage.CleanDB()
+
+    username := "testUsername" 
+
+    err := RemoveUserCredentials(username)
+    
+    if err == nil {
+        t.Fatalf("RemoveUserCredentials for non existent user should be returning an error")
+    }
+}
+
+func TestRemoveUserCredentialsForExistingUserRemovesTheFolder(t *testing.T) {
+    localstorage.SetTestDb()
+    defer localstorage.CleanDB()
+
+    sitehash := "testSiteHash"
+    username := "testUsername"
+    credentials := []byte("test")
+    PutCredentialsForSiteHash(sitehash, username, credentials)
+
+    err := RemoveUserCredentials(username)
+
+    if err != nil {
+        t.Errorf("RemoveUserCredentials failed with an error: %v", err)
+    }
+    res, err := os.ReadDir(localstorage.DB_PATH() + "/" + getEncodedUsername(username))
+    if err == nil {
+        t.Errorf("After remove credentials, the user directory path still exsits")
+    }
+    if res != nil {
+        t.Errorf("After remove credentials, the user directory still returns some content: %v", res)
+    }
+}
+
+func TestRemoveUserCredentialsForExistingUserActuallyRemovesCredentials(t *testing.T) {
+    localstorage.SetTestDb()
+    defer localstorage.CleanDB()
+
+    sitehash := "testSiteHash"
+    username := "testUsername"
+    credentials := []byte("test")
+    PutCredentialsForSiteHash(sitehash, username, credentials)
+
+    RemoveUserCredentials(username)
+
+    res, err := GetCredentialsForSiteHash(sitehash, username)
+    if err == nil {
+        t.Errorf("After RemoveUserCredentials, GetCredentialsForSiteHash does not return an error")
+    }
+    if res != nil {
+        t.Errorf("After RemoveUserCredentials, GetCredentialsForSiteHash should not have returned a result. Returned result: %v", res)
+    }
+}
+
+func TestRemoveUserCredentialsForExistingUserDoesNotRemoveOtherUser(t *testing.T) {
+    localstorage.SetTestDb()
+    defer localstorage.CleanDB()
+
+    sitehash := "testSiteHash"
+    username1 := "testUsername1"
+    credentials := []byte("test")
+    PutCredentialsForSiteHash(sitehash, username1, credentials)
+    username2 := "testUsername2"
+    PutCredentialsForSiteHash(sitehash, username2, credentials)
+    
+    RemoveUserCredentials(username1)
+
+    res, err := GetCredentialsForSiteHash(sitehash, username2)
+    if err != nil {
+        t.Errorf("Non removed user should not have its credentials removed! Error thrown: %v", err)
+    }
+    if res == nil {
+        t.Errorf("Non removed user should still return back credentials!")
+    }
+}
+
