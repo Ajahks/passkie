@@ -35,6 +35,16 @@ To retrieve the credentials
 ./passkie retrieve --user <username (default)> --site <base url (required)>
 ```
 
+To delete user credentials
+```
+./passkie remove --user <username (default)> --site <base url (required)>
+```
+
+To delete user
+```
+./passkie remove --user <username (default)>
+```
+
 ## Passkie Framework
 
 The passkie framework is broken up into multiple sub modules

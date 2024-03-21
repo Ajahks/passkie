@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"strings"
 
+	passkieApp "github.com/Ajahks/passkie/app"
 	"github.com/spf13/cobra"
 )
 
@@ -18,20 +19,22 @@ var removeCmd = &cobra.Command{
 
 If a user and a site is provided, only removes the site's credentials from the user's credential database`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("remove called")
         user = strings.ToLower(user)
 
+        masterPassword, err := verifyMasterPasswordWorkflow()
+        if err != nil { return }
+
         if len(url) == 0 {
-            runUserDeletionWorkflow()
+            runUserDeletionWorkflow(masterPassword)
             return
         }
 
-        runSiteDeletionWorkflow()
+        runSiteDeletionWorkflow(masterPassword)
 	},
 }
 
-func runSiteDeletionWorkflow() {
-    fmt.Printf("Deleting credentials for site: %s .  This cannot be undone!", url)
+func runSiteDeletionWorkflow(masterPassword string) {
+    fmt.Printf("Deleting credentials for site: %s .  This cannot be undone!\n", url)
     var continuePrompt string
     fmt.Print("Continue? [y/N]: ")
     _, err := fmt.Scanln(&continuePrompt)
@@ -43,11 +46,14 @@ func runSiteDeletionWorkflow() {
         return 
     }
 
-    // TODO: Remove credentials
+    err = passkieApp.RemoveCredentialsForSite(url, user, masterPassword)
+    if err != nil {
+        fmt.Printf("Failed to remove credentials for site: %v\n", err)
+    }
 }
 
-func runUserDeletionWorkflow() {
-    fmt.Printf("No site specified this will delete the user '%s' and all their credentials! This cannot be undone!", user)
+func runUserDeletionWorkflow(masterPassword string) {
+    fmt.Printf("No site specified this will delete the user '%s' and all their credentials! This cannot be undone!\n", user)
     var continuePrompt string
     fmt.Print("Continue? [y/N]: ")
     _, err := fmt.Scanln(&continuePrompt)
@@ -59,12 +65,15 @@ func runUserDeletionWorkflow() {
         return 
     }
 
-    // TODO: Remove user
+    err = passkieApp.RemoveUser(user, masterPassword)
+    if err != nil {
+        fmt.Printf("Failed to remove the user: %v\n", err)
+    }
 }
 
 func init() {
 	rootCmd.AddCommand(removeCmd)
     removeCmd.Flags().StringVarP(&user, "user", "u", "default", "passkie username. default:'default'")
-    removeCmd.Flags().StringVarP(&url, "site", "s", "", "Base url to retrieve credentials for (Ex: http://example.com/, https://test.com/) REQUIRED")
+    removeCmd.Flags().StringVarP(&url, "site", "s", "", "Base url to remove credentials (Ex: http://example.com/, https://test.com/).  Exclude this if you want to delete the entire user")
 }
 

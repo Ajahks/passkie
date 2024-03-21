@@ -84,6 +84,6 @@ func init() {
 	rootCmd.AddCommand(storeCmd)
 
     storeCmd.Flags().StringVarP(&user, "user", "u", "default", "passkie username. default:'default'")
-    storeCmd.Flags().StringVarP(&url, "site", "s", "", "Base url to retrieve credentials for (Ex: http://example.com/, https://test.com/) REQUIRED")
+    storeCmd.Flags().StringVarP(&url, "site", "s", "", "Base url to store credentials for (Ex: http://example.com/, https://test.com/) REQUIRED")
     storeCmd.MarkFlagRequired("site")
 }

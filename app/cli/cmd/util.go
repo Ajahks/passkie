@@ -39,3 +39,4 @@ func outputCredentials(credentials map[string]string) {
         fmt.Printf("    %s: %s\n", field, credential)
     }
 }
+
