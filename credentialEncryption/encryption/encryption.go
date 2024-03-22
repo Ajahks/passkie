@@ -10,7 +10,7 @@ import (
 	"log"
 )
 
-func EncryptCredentials(masterPassword string, credentials map[string]string) []byte {
+func EncryptCredentials[T any](masterPassword string, credentials T) []byte {
     byteBuffer := new(bytes.Buffer)
     e := gob.NewEncoder(byteBuffer)
     err := e.Encode(credentials)
@@ -40,7 +40,7 @@ func EncryptCredentials(masterPassword string, credentials map[string]string) []
     return ciphertext 
 }
 
-func DecryptCredentials(masterPassword string, encryptedCredentials []byte) map[string]string {
+func DecryptCredentials[T any](masterPassword string, encryptedCredentials []byte) T {
     passwordHash := passkieHash.HashPassword(masterPassword) 
 
     aesCipher, err := aes.NewCipher(passwordHash)
@@ -62,7 +62,7 @@ func DecryptCredentials(masterPassword string, encryptedCredentials []byte) map[
 
     byteBuffer := new(bytes.Buffer)
     byteBuffer.Write(decryptedCredentials)
-    var decodedMap map[string]string
+    var decodedMap T 
     decoder := gob.NewDecoder(byteBuffer)
 
     err = decoder.Decode(&decodedMap)

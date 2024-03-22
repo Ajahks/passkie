@@ -39,7 +39,7 @@ func RetrieveCredentialsForSite(siteBaseUrl string, username string, masterPassw
         return nil, err
     }
 
-    decryptedCredentials := encryption.DecryptCredentials(masterPassword, encryptedCredentials) 
+    decryptedCredentials := encryption.DecryptCredentials[map[string]string](masterPassword, encryptedCredentials) 
     return decryptedCredentials, nil
 }
 

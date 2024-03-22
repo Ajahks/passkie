@@ -12,7 +12,7 @@ func TestEncryptionDecryption(t *testing.T) {
     originalCredentials["testUser1"] = "testPassword1"
 
     encryptedCredentials := EncryptCredentials(masterPassword, originalCredentials)
-    decryptedCredentials := DecryptCredentials(masterPassword, encryptedCredentials)
+    decryptedCredentials := DecryptCredentials[map[string]string](masterPassword, encryptedCredentials)
 
     if len(decryptedCredentials) != 1 {
         t.Fatalf(
@@ -43,7 +43,7 @@ func TestEncryptionDecryptionWithMultipleUsers(t *testing.T) {
     originalCredentials["testUser3"] = "testPassword3"
 
     encryptedCredentials := EncryptCredentials(masterPassword, originalCredentials)
-    decryptedCredentials := DecryptCredentials(masterPassword, encryptedCredentials)
+    decryptedCredentials := DecryptCredentials[map[string]string](masterPassword, encryptedCredentials)
 
     if len(decryptedCredentials) != 3 {
         t.Fatalf(
