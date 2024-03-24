@@ -18,9 +18,9 @@ func TestPutCredentialsForSiteHashCreatesCorrectFileInCorrectPath(t *testing.T) 
     PutCredentialsForSiteHash(sitehash, username, credentials)
 
 
-    _, err := os.ReadFile(getFilePath(username))
+    _, err := os.ReadFile(getFilePath(username, FILE_NAME))
     if err != nil {
-        t.Errorf("Failed to find the credential DB file in localPath: %s", getFilePath(username))
+        t.Errorf("Failed to find the credential DB file in localPath: %s", getFilePath(username, FILE_NAME))
     }
 }
 
@@ -133,12 +133,12 @@ func TestRemoveCredentialsForSiteHashForNonExistentSiteHashDoesNotModifyResult(t
     credentials := []byte("test")
 
     PutCredentialsForSiteHash(sitehash, username, credentials)
-    data1, err := os.ReadFile(getFilePath(username))
+    data1, err := os.ReadFile(getFilePath(username, FILE_NAME))
     if err != nil {
         t.Fatalf("Failed to read DB file: %s\n", err)
     }
     RemoveCredentialsForSiteHash("otherSite", username)
-    data2, err := os.ReadFile(getFilePath(username))
+    data2, err := os.ReadFile(getFilePath(username, FILE_NAME))
     if err != nil {
         t.Fatalf("Failed to read DB file: %s\n", err)
     }
