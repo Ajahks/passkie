@@ -1,6 +1,7 @@
 package credentialsDb
 
 import (
+	"encoding/base64"
 	"errors"
 	"os"
 
@@ -9,8 +10,17 @@ import (
 
 const FILE_NAME = "credentialsDB.txt"
 
+func getEncodedUsername(username string) string {
+    return base64.StdEncoding.EncodeToString([]byte(username))
+}
+
+func getFilePath(username string) string {
+    // Not the most secure storing the usernames as base64 encoding, but slightly better than plaintext
+    return localstorage.DB_PATH() + "/" + getEncodedUsername(username) + "/" + FILE_NAME
+}
+
 func PutCredentialsForSiteHash(sitehash string, username string, encryptedCredentials []byte) {
-    data, err := os.ReadFile(getFilePath(username, FILE_NAME))
+    data, err := os.ReadFile(getFilePath(username))
     if err != nil {
         siteCredentialsMap := make(map[string][]byte)
         siteCredentialsMap[sitehash] = encryptedCredentials 
@@ -26,7 +36,7 @@ func PutCredentialsForSiteHash(sitehash string, username string, encryptedCreden
 }
 
 func GetCredentialsForSiteHash(sitehash string, username string) ([]byte, error) {
-    data, err := os.ReadFile(getFilePath(username, FILE_NAME))
+    data, err := os.ReadFile(getFilePath(username))
     if err != nil {
         return nil, err 
     }
@@ -41,7 +51,7 @@ func GetCredentialsForSiteHash(sitehash string, username string) ([]byte, error)
 }
 
 func RemoveCredentialsForSiteHash(sitehash string, username string) error {
-    data, err := os.ReadFile(getFilePath(username, FILE_NAME))
+    data, err := os.ReadFile(getFilePath(username))
     if err != nil {
         return err
     }
@@ -54,7 +64,7 @@ func RemoveCredentialsForSiteHash(sitehash string, username string) error {
 }
 
 func RemoveUserCredentials(username string) error {
-    err := os.Remove(getFilePath(username, FILE_NAME))
+    err := os.Remove(getFilePath(username))
     if err != nil { return err }
 
     err = os.Remove(localstorage.DB_PATH() + "/" + getEncodedUsername(username))
