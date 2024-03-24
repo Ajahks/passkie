@@ -1,6 +1,7 @@
 package encryption
 
 import (
+	"errors"
 	"reflect"
 	"testing"
 )
@@ -12,7 +13,10 @@ func TestEncryptionDecryption(t *testing.T) {
     originalCredentials["testUser1"] = "testPassword1"
 
     encryptedCredentials := EncryptCredentials(masterPassword, originalCredentials)
-    decryptedCredentials := DecryptCredentials[map[string]string](masterPassword, encryptedCredentials)
+    decryptedCredentials, err := DecryptCredentials[map[string]string](masterPassword, encryptedCredentials)
+    if err != nil {
+        t.Fatalf("Failed to DecryptCredentials: %v", err)
+    }
 
     if len(decryptedCredentials) != 1 {
         t.Fatalf(
@@ -43,7 +47,10 @@ func TestEncryptionDecryptionWithMultipleUsers(t *testing.T) {
     originalCredentials["testUser3"] = "testPassword3"
 
     encryptedCredentials := EncryptCredentials(masterPassword, originalCredentials)
-    decryptedCredentials := DecryptCredentials[map[string]string](masterPassword, encryptedCredentials)
+    decryptedCredentials, err := DecryptCredentials[map[string]string](masterPassword, encryptedCredentials)
+    if err != nil {
+        t.Fatalf("Failed to DecryptCredentials: %v", err)
+    }
 
     if len(decryptedCredentials) != 3 {
         t.Fatalf(
@@ -112,3 +119,32 @@ func TestEncryptionReturnsADifferentResultEncryption(t *testing.T) {
         )
     }
 }
+
+func TestEncryptionDecryptionWithDifferentTypeReturnsError(t *testing.T) {
+    masterPassword := "testMasterPassword"
+    var credentialsMap map[string]string
+    credentialsMap = make(map[string]string)
+    credentialsMap["testUser1"] = "testPassword"
+    credentialsList := []map[string]string { credentialsMap }
+
+    encryptedCredentialsMap := EncryptCredentials(masterPassword, credentialsMap)
+    encryptedCredentialsList := EncryptCredentials(masterPassword, credentialsList)
+
+    decryptedCredentialsMap, err1 := DecryptCredentials[map[string]string](masterPassword, encryptedCredentialsList)
+    decryptedCredentialsList, err2 := DecryptCredentials[[]map[string]string](masterPassword, encryptedCredentialsMap)
+
+    if err1 == nil {
+        t.Errorf("Decryting credentials list to credentials map should have thrown an error! Returned credentials: %v", decryptedCredentialsMap)
+    }
+    if err2 == nil {
+        t.Errorf("Decrypting credentials map to credentials list should have thrown an error! Returned credentials: %v", decryptedCredentialsList)
+    }
+    var credentialErr *CredentialDecodingError
+    if !errors.As(err1, &credentialErr) {
+        t.Errorf("list->map error not a CredentialDecodingError.  Actual Error: %T", err1) 
+    }
+    if !errors.As(err2, &credentialErr) {
+        t.Errorf("map->list error not a CredentialDecodingError.  Actual Error: %T", err2) 
+    }
+}
+

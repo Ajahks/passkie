@@ -6,9 +6,19 @@ import (
 	"crypto/cipher"
 	"crypto/rand"
 	"encoding/gob"
-	passkieHash "github.com/Ajahks/passkie/credentialEncryption/hash"
+	"fmt"
 	"log"
+
+	passkieHash "github.com/Ajahks/passkie/credentialEncryption/hash"
 )
+
+type CredentialDecodingError struct {
+    cause error
+}
+
+func (e *CredentialDecodingError) Error() string {
+    return fmt.Sprintf("Failed to decode credentials: %v", e.cause)
+}
 
 func EncryptCredentials[T any](masterPassword string, credentials T) []byte {
     byteBuffer := new(bytes.Buffer)
@@ -40,16 +50,17 @@ func EncryptCredentials[T any](masterPassword string, credentials T) []byte {
     return ciphertext 
 }
 
-func DecryptCredentials[T any](masterPassword string, encryptedCredentials []byte) T {
+func DecryptCredentials[T any](masterPassword string, encryptedCredentials []byte) (T, error) {
     passwordHash := passkieHash.HashPassword(masterPassword) 
+    var decodedCredentials T 
 
     aesCipher, err := aes.NewCipher(passwordHash)
     if err != nil {
-        log.Fatal("Error found when initializing cipher with private key", err)
+        return decodedCredentials, fmt.Errorf("Error when initializing cipher with private key: %w", err)
     }
     gcm, err := cipher.NewGCM(aesCipher)
     if err != nil {
-        log.Fatal("Error while initializing GCM cipher", err)
+        return decodedCredentials, fmt.Errorf("Error while initializing GCM cipher: %w", err) 
     }
 
     nonceSize := gcm.NonceSize()
@@ -57,18 +68,18 @@ func DecryptCredentials[T any](masterPassword string, encryptedCredentials []byt
 
     decryptedCredentials, err := gcm.Open(nil, nonce, encryptedCredentials, nil)
     if err != nil {
-        log.Fatal("Error while decoding credentials", err)
+        return decodedCredentials, fmt.Errorf("Error while decrypting credentials: %w", err)
     }
 
     byteBuffer := new(bytes.Buffer)
     byteBuffer.Write(decryptedCredentials)
-    var decodedMap T 
     decoder := gob.NewDecoder(byteBuffer)
 
-    err = decoder.Decode(&decodedMap)
+    err = decoder.Decode(&decodedCredentials)
     if err != nil {
-        log.Fatal("Error while decoding decryptedCrednetials into map", err)
+        return decodedCredentials, &CredentialDecodingError{ cause: err } 
     }
 
-    return decodedMap
+    return decodedCredentials, nil
 }
+
