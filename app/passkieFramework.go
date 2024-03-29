@@ -20,14 +20,21 @@ func StoreCredentialsForSite(
         return errors.New("InvalidMasterPassword: Cannot store credentials because masterPassword for user is incorrect!")
     }
 
+    credentialsList, err := RetrieveCredentialsForSite(siteBaseUrl, username, masterPassword)
+    if err != nil { 
+        credentialsList = []map[string]string{credentials}
+    } else {
+        credentialsList = append(credentialsList, credentials)
+    }
+    
     hashedSite := hash.HashUrl(siteBaseUrl, masterPassword)
-    encryptedCredentials := encryption.EncryptCredentials(masterPassword, credentials)
+    encryptedCredentials := encryption.EncryptCredentials(masterPassword, credentialsList)
     credentialsDb.PutCredentialsForSiteHash(string(hashedSite), username, encryptedCredentials)
     
     return nil
 }
 
-func RetrieveCredentialsForSite(siteBaseUrl string, username string, masterPassword string) (map[string]string, error) {
+func RetrieveCredentialsForSite(siteBaseUrl string, username string, masterPassword string) ([]map[string]string, error) {
     ok := passwordverification.VerifyPasswordForUser(username, masterPassword)
     if !ok {
         return nil, errors.New("InvalidMasterPassword: Cannot retrieve credentials because masterPassword for user is incorrect!")
@@ -39,11 +46,12 @@ func RetrieveCredentialsForSite(siteBaseUrl string, username string, masterPassw
         return nil, err
     }
 
-    decryptedCredentials, err := encryption.DecryptCredentials[map[string]string](masterPassword, encryptedCredentials) 
+    decryptedCredentialsList, err := encryption.DecryptCredentials[[]map[string]string](masterPassword, encryptedCredentials) 
     if err != nil {
         return nil, err
     }
-    return decryptedCredentials, nil
+
+    return decryptedCredentialsList, nil
 }
 
 func CreateNewUser(username string, masterPassword string) error {

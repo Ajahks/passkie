@@ -129,6 +129,7 @@ func TestRetrieveCrednetialsForSiteForUnknownSiteReturnsError(t *testing.T) {
 func TestStoreCredentialsForSiteThenRetrieveCredentialsForSiteGetsOriginalCredentials(t *testing.T) {
     localstorage.SetTestDb()
     defer localstorage.CleanDB()
+
     username := "testUser"
     password := "testPassword"
     site := "testUrl.com"
@@ -143,14 +144,16 @@ func TestStoreCredentialsForSiteThenRetrieveCredentialsForSiteGetsOriginalCreden
         t.Fatalf("Failed to retrieve credentials for site: %v", err)
     }
 
-    if !reflect.DeepEqual(credentials, result) {
-        t.Fatalf("Retrieved credentials are not the same as original! Original: %v, Retrieved: %v", credentials, result) 
+    expectedResult := []map[string]string{credentials}
+    if !reflect.DeepEqual(expectedResult, result) {
+        t.Fatalf("Retrieved credentials are not the same as original! Original: %v, Retrieved: %v", expectedResult, result) 
     }
 }
 
-func TestStoreCredentialsForSameSiteTwiceVerifyRetrieveCredentialsGetsLastStored(t *testing.T) {
+func TestStoreCredentialsForSameSiteTwiceVerifyRetrieveCredentialsGetsBoth(t *testing.T) {
     localstorage.SetTestDb()
     defer localstorage.CleanDB()
+
     username := "testUser"
     password := "testPassword"
     site := "testUrl.com"
@@ -169,8 +172,9 @@ func TestStoreCredentialsForSameSiteTwiceVerifyRetrieveCredentialsGetsLastStored
         t.Fatalf("Failed to retrieve credentials for site: %v", err)
     }
 
-    if !reflect.DeepEqual(credentials2, result) {
-        t.Fatalf("Retrieved credentials are not the same as expected! Expected: %v, Retrieved: %v", credentials2, result) 
+    expectedResult := []map[string]string{credentials1, credentials2}
+    if !reflect.DeepEqual(expectedResult, result) {
+        t.Fatalf("Retrieved credentials are not the same as expected! Expected: %v, Retrieved: %v", expectedResult, result) 
     }
 }
 

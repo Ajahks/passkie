@@ -33,10 +33,16 @@ func verifyMasterPasswordWorkflow() (string, error) {
     return "", errors.New("Incorrect master password")
 }
 
-func outputCredentials(credentials map[string]string) {
-    fmt.Println("Credentials")
-    for field, credential := range credentials {
-        fmt.Printf("    %s: %s\n", field, credential)
+func outputCredentials(credentialsList []map[string]string) {
+    fmt.Println("Credentials:")
+    fmt.Println("[")
+    for index, credentials := range credentialsList {
+        fmt.Printf("  %d: {\n", index)
+        for field, credential := range credentials {
+            fmt.Printf("    %s: %s\n", field, credential)
+        }
+        fmt.Println("  }")
     }
+    fmt.Println("]")
 }
 
