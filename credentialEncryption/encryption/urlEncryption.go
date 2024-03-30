@@ -3,6 +3,7 @@ package encryption
 import (
 	"crypto/aes"
 	"crypto/cipher"
+	"crypto/rand"
 	"fmt"
 	"log"
 
@@ -23,6 +24,7 @@ func EncryptUrl(url string, masterPassword string) []byte {
         log.Fatal("Error while initializing GCM cipher", err)
     }
     nonce := make([]byte, gcm.NonceSize())
+    _, err = rand.Read(nonce)
     if err != nil {
         log.Fatal("Error while creating random nonce value", err)
     }

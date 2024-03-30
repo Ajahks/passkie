@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/Ajahks/passkie/credentialEncryption/encryption"
+	"github.com/Ajahks/passkie/credentialEncryption/hash"
 	passwordverification "github.com/Ajahks/passkie/passwordVerification"
 	"github.com/Ajahks/passkie/storage/localStorage/credentialsDb"
 )
@@ -26,9 +27,9 @@ func StoreCredentialsForSite(
         credentialsList = append(credentialsList, credentials)
     }
     
-    encryptedUrl := encryption.EncryptUrl(siteBaseUrl, masterPassword)
+    hashedSite := hash.HashUrl(siteBaseUrl, masterPassword)
     encryptedCredentials := encryption.EncryptCredentials(masterPassword, credentialsList)
-    credentialsDb.PutCredentialsForSiteHash(string(encryptedUrl), username, encryptedCredentials)
+    credentialsDb.PutCredentialsForSiteHash(string(hashedSite), username, encryptedCredentials)
     
     return nil
 }
@@ -39,8 +40,8 @@ func RetrieveCredentialsForSite(siteBaseUrl string, username string, masterPassw
         return nil, errors.New("InvalidMasterPassword: Cannot retrieve credentials because masterPassword for user is incorrect!")
     }
 
-    encryptedUrl := encryption.EncryptUrl(siteBaseUrl, masterPassword)
-    encryptedCredentials, err := credentialsDb.GetCredentialsForSiteHash(string(encryptedUrl), username)
+    hashedSite := hash.HashUrl(siteBaseUrl, masterPassword)
+    encryptedCredentials, err := credentialsDb.GetCredentialsForSiteHash(string(hashedSite), username)
     if err != nil {
         return nil, err
     }
@@ -68,8 +69,8 @@ func RemoveCredentialsForSite(siteBaseUrl string, username string, masterPasswor
         return errors.New("InvalidMasterpassword: Cannot remove credentials because masterPassword is incorrect!")
     }
 
-    encryptedUrl := encryption.EncryptUrl(siteBaseUrl, masterPassword)
-    err := credentialsDb.RemoveCredentialsForSiteHash(string(encryptedUrl), username)
+    hashedSite := hash.HashUrl(siteBaseUrl, masterPassword)
+    err := credentialsDb.RemoveCredentialsForSiteHash(string(hashedSite), username)
     if err != nil { return err }
 
     return nil
