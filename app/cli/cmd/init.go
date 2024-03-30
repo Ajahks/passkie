@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	passkieApp "github.com/Ajahks/passkie/app"
+	passkieApp "github.com/Ajahks/passkie"
 	"github.com/spf13/cobra"
 	"golang.org/x/term"
 )

@@ -1,4 +1,4 @@
-package passkieApp
+package passkie 
 
 import (
 	"errors"
