@@ -11,8 +11,8 @@ func TestEncryptUrlDecryptUrlReturnsOriginalResponse(t *testing.T) {
     password := "testPassword"
     url := "testUrl.com"
 
-    encryptedUrl := encryption.EncryptUrl(password, url) 
-    decryptedUrl, err := encryption.DecryptUrl(password, encryptedUrl)
+    encryptedUrl := encryption.EncryptUrl(url, password) 
+    decryptedUrl, err := encryption.DecryptUrl(encryptedUrl, password)
     
     if err != nil {
         t.Fatalf("Failed to decrypt url: %v", err)
@@ -26,7 +26,7 @@ func TestEncryptUrlReturnsADifferentStringFromTheOriginalUrl(t *testing.T) {
     password := "testPassword"
     url := "testUrl.com"
 
-    encryptedUrl := encryption.EncryptUrl(password, url) 
+    encryptedUrl := encryption.EncryptUrl(url, password) 
 
     if url == string(encryptedUrl) {
         t.Fatal("Encrypted url should not match the original url") 
@@ -38,8 +38,8 @@ func TestEncryptUrlAndDecryptUrlWithDifferentPasswordsReturnsDifferentResults(t 
     password2 := "testPass2"
     url := "testUrl.com"
 
-    encryptedUrl := encryption.EncryptUrl(password1, url)
-    decryptedUrl, _ := encryption.DecryptUrl(password2, encryptedUrl)
+    encryptedUrl := encryption.EncryptUrl(url, password1)
+    decryptedUrl, _ := encryption.DecryptUrl(encryptedUrl, password2)
 
     if decryptedUrl == url {
         t.Fatal("Decrypted url with a different password should not match the original url")
@@ -51,8 +51,8 @@ func TestEncryptUrlTwiceWithDifferentPasswordReturnsADifferentResult(t *testing.
     password2 := "testPass2"
     url := "testUrl.com"
 
-    encryptedUrl1 := encryption.EncryptUrl(password1, url)
-    encryptedUrl2 := encryption.EncryptUrl(password2, url)
+    encryptedUrl1 := encryption.EncryptUrl(url, password1)
+    encryptedUrl2 := encryption.EncryptUrl(url, password2)
 
     if bytes.Equal(encryptedUrl1, encryptedUrl2) {
         t.Fatal("Encrypted urls with different passwords should not lead to matching encryptions!")

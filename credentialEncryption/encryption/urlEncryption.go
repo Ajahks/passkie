@@ -10,7 +10,7 @@ import (
 	passkieHash "github.com/Ajahks/passkie/credentialEncryption/hash"
 )
 
-func EncryptUrl(masterPassword string, url string) []byte {
+func EncryptUrl(url string, masterPassword string) []byte {
     urlBytes := []byte(url) 
 
     passwordHash := passkieHash.HashPassword(masterPassword)
@@ -34,7 +34,7 @@ func EncryptUrl(masterPassword string, url string) []byte {
     return ciphertext 
 }
 
-func DecryptUrl(masterPassword string, encryptedUrl []byte) (string, error) {
+func DecryptUrl(encryptedUrl []byte, masterPassword string) (string, error) {
     passwordHash := passkieHash.HashPassword(masterPassword) 
 
     aesCipher, err := aes.NewCipher(passwordHash)
