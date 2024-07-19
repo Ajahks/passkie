@@ -4,6 +4,7 @@
 package urldb
 
 import (
+	"encoding/base64"
 	"os"
 
 	"github.com/Ajahks/passkie/storage/localStorage"
@@ -11,27 +12,32 @@ import (
 
 const FILE_NAME = "urls.txt"
 
-func getFilePath() string {
-    return localstorage.DB_PATH() + "/" + FILE_NAME 
+func getEncodedUsername(username string) string {
+    return base64.StdEncoding.EncodeToString([]byte(username))
 }
 
-func AddActiveUrl(url string) {
-    data, err := os.ReadFile(getFilePath())
+func getFilePath(username string) string {
+    // Not the most secure storing the usernames as base64 encoding, but slightly better than plaintext
+    return localstorage.DB_PATH() + "/" + getEncodedUsername(username) + "/" + FILE_NAME
+}
+
+func AddActiveUrlForUser(url string, username string) {
+    data, err := os.ReadFile(getFilePath(username))
     if err != nil {
         activeUrlMap := make(map[string]bool)
         activeUrlMap[url] = true 
 
-        localstorage.WriteMapToFile(activeUrlMap, FILE_NAME)
+        localstorage.WriteMapToFile(activeUrlMap, FILE_NAME, getEncodedUsername(username))
     } else {
         activeUrlMap := localstorage.DeserializeFileData[bool](data) 
         activeUrlMap[url] = true 
 
-        localstorage.WriteMapToFile(activeUrlMap, FILE_NAME)
+        localstorage.WriteMapToFile(activeUrlMap, FILE_NAME, getEncodedUsername(username))
     }
 }
 
-func IsUrlActive(url string) bool {
-    data, err := os.ReadFile(getFilePath())
+func IsUrlActiveForUser(url string, username string) bool {
+    data, err := os.ReadFile(getFilePath(username))
     if err != nil {
         return false 
     }
@@ -45,8 +51,25 @@ func IsUrlActive(url string) bool {
     return activeUrl
 }
 
-func RemoveActiveUrl(url string) error {
-    data, err := os.ReadFile(getFilePath())
+func ListUrlsForUser(username string) ([]string, error) {
+	keys := make([]string, 0)
+    data, err := os.ReadFile(getFilePath(username))
+    if err != nil {
+        return keys, err 
+    }
+
+	urlMap := localstorage.DeserializeFileData[bool](data)
+	for key := range urlMap {
+		if (urlMap[key] == true) {
+			keys = append(keys, key)	
+		}
+	}
+
+	return keys, nil
+}
+
+func RemoveActiveUrlForUser(url string, username string) error {
+    data, err := os.ReadFile(getFilePath(username))
     if err != nil {
         return err
     }
@@ -54,7 +77,7 @@ func RemoveActiveUrl(url string) error {
     activeUrlMap := localstorage.DeserializeFileData[bool](data) 
     delete(activeUrlMap, url)
 
-    localstorage.WriteMapToFile(activeUrlMap, FILE_NAME)
+    localstorage.WriteMapToFile(activeUrlMap, FILE_NAME, getEncodedUsername(username))
     return nil
 }
 
