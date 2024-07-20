@@ -35,6 +35,11 @@ To retrieve the credentials
 ./passkie retrieve --user <username (default)> --site <base url (required)>
 ```
 
+To list urls for user
+```
+./passkie listUrls --user <username (default)
+```
+
 To delete user credentials
 ```
 ./passkie remove --user <username (default)> --site <base url (required)>

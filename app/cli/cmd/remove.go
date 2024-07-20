@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	passkieApp "github.com/Ajahks/passkie"
+	"github.com/Ajahks/passkie/storage/localStorage/urlDb"
 	"github.com/spf13/cobra"
 )
 
@@ -50,6 +51,9 @@ func runSiteDeletionWorkflow(masterPassword string) {
     if err != nil {
         fmt.Printf("Failed to remove credentials for site: %v\n", err)
     }
+
+	fmt.Println("Removing url from local db")
+	urldb.RemoveActiveUrlForUser(url, user)
 }
 
 func runUserDeletionWorkflow(masterPassword string) {

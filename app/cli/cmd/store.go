@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	passkieApp "github.com/Ajahks/passkie"
+	"github.com/Ajahks/passkie/storage/localStorage/urlDb"
 	"github.com/spf13/cobra"
 )
 
@@ -42,6 +43,9 @@ When the workflow starts, it will be a series of questions for the user.
 
         fmt.Println("Storing credentials for url!")
         passkieApp.StoreCredentialsForSite(url, user, password, credentialsMap)
+
+		fmt.Println("Saving url in local db")
+		urldb.AddActiveUrlForUser(url, user)
 	},
 }
 
