@@ -1,37 +1,40 @@
 package cmd
 
 import (
-	"bytes"
-	"fmt"
-	"strings"
+    "bytes"
+    "fmt"
+    "strings"
+    "syscall"
 
-	passkieApp "github.com/Ajahks/passkie"
-	"github.com/spf13/cobra"
-	"golang.org/x/term"
+    passkieApp "github.com/Ajahks/passkie"
+    "github.com/spf13/cobra"
+    "golang.org/x/term"
 )
 
 // initCmd represents the init command
 var initCmd = &cobra.Command{
-	Use:   "init",
-	Short: "Initializes passkie with a user and master password",
-	Long: `Sets the username and master password for passkie.
+    Use:   "init",
+    Short: "Initializes passkie with a user and master password",
+    Long: `Sets the username and master password for passkie.
 
 User must enter a master password twice.  User must also not be already created.
     `,
-	Run: func(cmd *cobra.Command, args []string) {
+    Run: func(cmd *cobra.Command, args []string) {
         user = strings.ToLower(user)
         fmt.Printf("Initializing with username: %s\n", user)
 
         fmt.Println("Enter a master password:")
-        password, err := term.ReadPassword(0)
+        password, err := term.ReadPassword(int(syscall.Stdin))
         if err != nil {
-            fmt.Println("Failed to read password!")
+            fmt.Printf("Failed to read password: %v\n!", err)
             return
         }
-        if !validatePassword(password) { return }
+        if !validatePassword(password) {
+            return
+        }
 
         fmt.Println("Re-enter master password:")
-        passwordVerification, err := term.ReadPassword(0)
+        passwordVerification, err := term.ReadPassword(int(syscall.Stdin))
         if err != nil {
             fmt.Println("Failed to read password!")
             return
@@ -39,7 +42,7 @@ User must enter a master password twice.  User must also not be already created.
 
         if !bytes.Equal(password, passwordVerification) {
             fmt.Println("Passwords do not match!")
-            return 
+            return
         }
 
         err = passkieApp.CreateNewUser(user, string(password))
@@ -48,19 +51,19 @@ User must enter a master password twice.  User must also not be already created.
             return
         }
         fmt.Printf("User %s successfuly created!\n", user)
-	},
+    },
 }
 
 func validatePassword(password []byte) bool {
     if len(password) == 0 {
         fmt.Println("Password must not be empty!")
-        return false 
+        return false
     }
 
     return true
 }
 
 func init() {
-	rootCmd.AddCommand(initCmd)
+    rootCmd.AddCommand(initCmd)
     initCmd.Flags().StringVarP(&user, "user", "u", "default", "passkie username. Non case sensitive. Default:'default'")
 }
