@@ -4,21 +4,21 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"bufio"
-	"fmt"
-	"os"
-	"strings"
+    "bufio"
+    "fmt"
+    "github.com/Ajahks/passkie/app/cli/storage/urlDb"
+    "os"
+    "strings"
 
-	passkieApp "github.com/Ajahks/passkie"
-	"github.com/Ajahks/passkie/storage/localStorage/urlDb"
-	"github.com/spf13/cobra"
+    passkieApp "github.com/Ajahks/passkie"
+    "github.com/spf13/cobra"
 )
 
 // storeCmd represents the store command
 var storeCmd = &cobra.Command{
-	Use:   "store",
-	Short: "Starts workflow for storing a new set of credentials for the user",
-	Long: `Initiates a cli workflow to store a new set of credentials for the user
+    Use:   "store",
+    Short: "Starts workflow for storing a new set of credentials for the user",
+    Long: `Initiates a cli workflow to store a new set of credentials for the user
 
 Must pass in base url which will be what the credentials map to.  (Example: https://example.com/, http://test.net/)
 Can pass in a username, or will default to a 'default' user if not passed. 
@@ -30,11 +30,11 @@ When the workflow starts, it will be a series of questions for the user.
   3. Ask if there are more fields and rerun the first two steps.
 - Credentials will be stored
 `,
-	Run: func(cmd *cobra.Command, args []string) {
-        user = strings.ToLower(user) 
+    Run: func(cmd *cobra.Command, args []string) {
+        user = strings.ToLower(user)
         fmt.Printf("Storing credentials for user: %s\n", user)
         fmt.Printf("Storing credentials for url: %s\n", url)
-        password, err := verifyMasterPasswordWorkflow() 
+        password, err := verifyMasterPasswordWorkflow()
         if err != nil {
             return
         }
@@ -44,14 +44,14 @@ When the workflow starts, it will be a series of questions for the user.
         fmt.Println("Storing credentials for url!")
         passkieApp.StoreCredentialsForSite(url, user, password, credentialsMap)
 
-		fmt.Println("Saving url in local db")
-		urldb.AddActiveUrlForUser(url, user)
-	},
+        fmt.Println("Saving url in local db")
+        urldb.AddActiveUrlForUser(url, user)
+    },
 }
 
 func inputCredentialsWorkflow() map[string]string {
     credentialsMap := make(map[string]string)
-    
+
     for {
         var fieldName string
         fmt.Print("Enter the name of the credentials field (ex: 'Username' 'Password'): ")
@@ -77,7 +77,7 @@ func inputCredentialsWorkflow() map[string]string {
         }
 
         if continuePrompt != "y" && continuePrompt != "Y" {
-            break 
+            break
         }
     }
 
@@ -85,7 +85,7 @@ func inputCredentialsWorkflow() map[string]string {
 }
 
 func init() {
-	rootCmd.AddCommand(storeCmd)
+    rootCmd.AddCommand(storeCmd)
 
     storeCmd.Flags().StringVarP(&user, "user", "u", "default", "passkie username. default:'default'")
     storeCmd.Flags().StringVarP(&url, "site", "s", "", "Base url to store credentials for (Ex: http://example.com/, https://test.com/) REQUIRED")
