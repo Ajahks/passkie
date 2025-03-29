@@ -45,6 +45,11 @@ To delete user credentials
 ./passkie remove --user <username (default)> --site <base url (required)>
 ```
 
+To delete user credentials at a specific index.  The indices can be found from retrieve.
+```
+./passkie remove --user <username (default)> --site <base url (required)> --index <index value>
+```
+
 To delete user
 ```
 ./passkie remove --user <username (default)>

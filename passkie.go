@@ -88,7 +88,7 @@ func RemoveSingleCredentialsForSite(siteBaseUrl string, username string, masterP
 	if err != nil {
 		return errors.New("No credentials found for site: " + siteBaseUrl)
 	} else {
-		if credentialsIndex >= len(credentialsList) {
+		if credentialsIndex < 0 || credentialsIndex >= len(credentialsList) {
 			return errors.New("Invalid index to remove from credentials")
 		}
 
